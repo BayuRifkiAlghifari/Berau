@@ -66,6 +66,7 @@ const PersonalData = ({navigation}) => {
   const [form, setForm] = useForm({
     status: 'Dedicated',
     wmp: '1',
+    statusAttendance: 'Hadir'
   });
 
   const currentDate = Moment(new Date()).format('YYYY-MM-DD');
@@ -86,13 +87,18 @@ const PersonalData = ({navigation}) => {
       })
       .then((ret) => {
         setToken(ret);
-        getDataAttendance();
-        getDataEmployee();
       })
       .catch((err) => {
         console.error(err.response);
       });
-  });
+  }, []);
+
+  useEffect(() => {
+    if(token) {
+      getDataAttendance();
+      getDataEmployee();
+    }
+  }, [token]);
 
   const dispatch = useDispatch();
 
@@ -132,6 +138,21 @@ const PersonalData = ({navigation}) => {
     setData(item);
   };
 
+  const setBadgeColor = (kehadiran) => {
+    switch(kehadiran) {
+      case 'Hadir':
+        return '#286090';
+      case 'Tidak Hadir':
+        return '#A3A3A3';
+      case 'Izin':
+        return '#3BB54A';
+      case 'Sakit':
+        return '#FFC700';
+      default:
+        return '#A3A3A3';
+    }
+  }
+
   return (
     <View style={styles.page}>
       <HeaderDetail
@@ -157,18 +178,20 @@ const PersonalData = ({navigation}) => {
                   <Text style={styles.labelBadge}>Kehadiran</Text>
                   <Text style={styles.labelStatus}>Status</Text>
                   <Text style={styles.labelWmp}>WMP</Text>
+                  <Text style={styles.labelWmp}>Tanggal</Text>
                 </View>
                 {attendance.map((res) => {
                   return (
                     <View style={styles.body} key={res.id}>
                       <Text style={styles.valueName}>{res.nama}</Text>
                       <View style={styles.containerBadge}>
-                        <View style={styles.badge(res.kehadiran)}>
+                        <View style={[styles.badge, {backgroundColor: setBadgeColor(res.kehadiran)}]}>
                           <Text style={styles.valueBadge}>{res.kehadiran}</Text>
                         </View>
                       </View>
                       <Text style={styles.valueStatus}>{res.status}</Text>
                       <Text style={styles.valueWmp}>{res.wmp}</Text>
+                      <Text style={styles.valueWmp}>-</Text>
                     </View>
                   );
                 })}
@@ -260,7 +283,11 @@ const PersonalData = ({navigation}) => {
               </View>
               <View style={styles.input}>
                 <Text style={styles.labelForm}>Kehadiran: </Text>
-                <TextInput value="Hadir" editable={false} />
+                <Select
+                  value={form.statusAttendance}
+                  type="Kehadiran"
+                  onSelectChange={(value) => setForm('statusAttendance', value)}
+                />
               </View>
               <Gap height={10} />
               <View style={styles.button}>
@@ -269,7 +296,7 @@ const PersonalData = ({navigation}) => {
                   onPress={() => {
                     const dataForSubmit = {
                       id_pegawai: data.id,
-                      status: 'Hadir',
+                      status: form.statusAttendance,
                       tanggal: currentDate,
                       status_pegawai: form.status,
                       id_wmp: form.wmp,
@@ -283,6 +310,7 @@ const PersonalData = ({navigation}) => {
                       .then((result) => {
                         setVisible(false);
                         dispatch(setLoading(false));
+                        getDataAttendance();
                         showMessage(result.data.meta.message, 'success');
                       })
                       .catch((err) => {
@@ -450,14 +478,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: normalize(-3),
   },
-  badge: (item) => ({
+  badge: {
     width: normalize(70),
-    backgroundColor: item === 'Hadir' ? '#286090' : '#A3A3A3',
+    backgroundColor: '#A3A3A3',
     borderRadius: normalize(5),
     paddingVertical: normalize(2),
     justifyContent: 'center',
     alignItems: 'center',
-  }),
+  },
   valueName: {
     fontFamily: 'Poppins-Regular',
     fontSize: normalize(12),

@@ -74,6 +74,19 @@ const Select = ({value, onSelectChange, type, enabled}) => {
           </Picker>
         </View>
       )}
+      {type === 'Kehadiran' && (
+        <View style={styles.input}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="Hadir" value="Hadir" />
+            <Picker.Item label="Tidak Hadir" value="Tidak Hadir" />
+            <Picker.Item label="Izin" value="Izin" />
+            <Picker.Item label="Sakit" value="Sakit" />
+          </Picker>
+        </View>
+      )}
       {type === 'Jenis Data' && (
         <View style={styles.input}>
           <Picker

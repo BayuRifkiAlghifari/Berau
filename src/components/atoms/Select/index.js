@@ -208,11 +208,8 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="Per Jam" value="Per Jam" />
-            <Picker.Item label="Per 3 Jam" value="Per 3 Jam" />
-            <Picker.Item label="Per 6 Jam" value="Per 6 Jam" />
-            <Picker.Item label="Per Hari" value="Per Hari" />
-            <Picker.Item label="Per Bulan" value="Per Bulan" />
+            <Picker.Item label="Shift-1" value="Shift-1" />
+            <Picker.Item label="Shift-2" value="Shift-2" />
           </Picker>
         </View>
       )}

@@ -124,21 +124,23 @@ const Steps = () => {
                 <Gap height={10} />
                 <Text style={styles.label}>Date Input</Text>
               </View>
-              <TouchableOpacity
-                style={styles.calendar}
-                onPress={() => setShow(true)}>
-                <Text>{Moment(form.date_input).format('DD-MM-YYYY')}</Text>
-                {show && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={form.date_input}
-                    mode="date"
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
-              </TouchableOpacity>
+              <View style={styles.containerInput}>
+                <TouchableOpacity
+                  style={styles.calendar}
+                  onPress={() => setShow(true)}>
+                  <Text>{Moment(form.date_input).format('DD-MM-YYYY')}</Text>
+                  {show && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={form.date_input}
+                      mode="date"
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
             <Gap height={20} />
             <View style={styles.container}>
@@ -160,21 +162,23 @@ const Steps = () => {
                 <Gap height={10} />
                 <Text style={styles.label}>Time Input</Text>
               </View>
-              <TouchableOpacity
-                style={styles.calendar}
-                onPress={() => setShowTime(true)}>
-                <Text>{Moment(form.time_input).format('H:mm')}</Text>
-                {showTime && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={form.time_input}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChangeTime}
-                  />
-                )}
-              </TouchableOpacity>
+              <View style={styles.containerInput}>
+                <TouchableOpacity
+                  style={styles.calendar}
+                  onPress={() => setShowTime(true)}>
+                  <Text>{Moment(form.time_input).format('H:mm')}</Text>
+                  {showTime && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={form.time_input}
+                      mode="time"
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChangeTime}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
             <Gap height={20} />
             <View style={styles.container}>
@@ -219,15 +223,14 @@ const Steps = () => {
                 <Text style={styles.label}>pH</Text>
               </View>
               <View style={styles.containerInput}>
-                <View style={styles.containerTimeInput}>
-                  <View style={styles.leftContainer}>
-                    <TextInput
-                      style={styles.timeInput}
-                      placeholder="Input"
-                      value={form.PH}
-                      onChangeText={(value) => setForm('PH', value)}
-                    />
-                  </View>
+                <View style={[styles.containerTimeInput, {paddingRight: normalize(16)}]}>
+                  <TextInput
+                    style={[styles.timeInput, { flex: 1 }]}
+                    keyboardType="number-pad"
+                    placeholder="Input"
+                    value={form.PH}
+                    onChangeText={(value) => setForm('PH', value)}
+                  />
                 </View>
               </View>
             </View>
@@ -241,6 +244,7 @@ const Steps = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.TSS}
                       onChangeText={(value) => setForm('TSS', value)}
@@ -267,6 +271,7 @@ const Steps = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.Fe}
                       onChangeText={(value) => setForm('Fe', value)}
@@ -293,6 +298,7 @@ const Steps = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.Mn}
                       onChangeText={(value) => setForm('Mn', value)}
@@ -319,6 +325,7 @@ const Steps = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.Debit}
                       onChangeText={(value) => setForm('Debit', value)}
@@ -446,29 +453,33 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: '#FFFFFF',
   },
+  content: {
+    width: '100%',
+  },
   container: {
+    flexWrap: 'wrap',
     flexDirection: 'row',
     marginHorizontal: normalize(45),
     justifyContent: 'center',
+    marginRight: normalize(30),
   },
   containerLabel: {
-    flex: 2,
+    flex: 1,
     justifyContent: 'center',
   },
   containerInput: {
     flex: 3,
-    marginLeft: normalize(20),
+    paddingLeft: normalize(20),
+    alignItems: 'flex-end',
   },
   calendar: {
-    flex: 3,
+    width: normalize(185),
     borderWidth: 1,
     borderColor: '#286090',
     borderRadius: normalize(10),
     backgroundColor: '#FFFFFF',
     paddingVertical: normalize(12),
     paddingLeft: normalize(11),
-    marginLeft: normalize(14),
-    marginRight: normalize(-18),
     height: normalize(40),
     marginBottom: normalize(-8),
   },
@@ -484,7 +495,6 @@ const styles = StyleSheet.create({
   containerTimeInput: {
     flexDirection: 'row',
     marginLeft: normalize(12),
-    marginRight: normalize(-18),
   },
   leftContainer: {
     flex: 1,

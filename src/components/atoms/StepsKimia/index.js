@@ -206,6 +206,7 @@ const StepsKimia = () => {
                 <TextInput
                   style={styles.textInput}
                   placeholder="Input"
+                  keyboardType="number-pad"
                   value={form.purity}
                   onChangeText={(value) => setForm('purity', value)}
                 />
@@ -232,6 +233,7 @@ const StepsKimia = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.chemDose}
                       onChangeText={(value) => setForm('chemDose', value)}
@@ -260,6 +262,7 @@ const StepsKimia = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.before}
                       onChangeText={(value) => setForm('before', value)}
@@ -286,6 +289,7 @@ const StepsKimia = () => {
                   <View style={styles.leftContainer}>
                     <TextInput
                       style={styles.timeInput}
+                      keyboardType="number-pad"
                       placeholder="Input"
                       value={form.current}
                       onChangeText={(value) => setForm('current', value)}

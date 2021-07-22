@@ -16,7 +16,7 @@ import storage from '../../utils/storage';
 const EditHistory = ({navigation, route}) => {
   const data = route.params;
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   const [form, setForm] = useForm({

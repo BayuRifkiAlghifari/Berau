@@ -72,7 +72,7 @@ const PersonalData = ({navigation}) => {
   const currentDate = Moment(new Date()).format('YYYY-MM-DD');
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   useEffect(() => {
@@ -191,7 +191,7 @@ const PersonalData = ({navigation}) => {
                       </View>
                       <Text style={styles.valueStatus}>{res.status}</Text>
                       <Text style={styles.valueWmp}>{res.wmp}</Text>
-                      <Text style={styles.valueWmp}>-</Text>
+                      <Text style={styles.valueWmp}>{Moment(new Date()).format('DD-MM-YYYY')}</Text>
                     </View>
                   );
                 })}

@@ -32,7 +32,7 @@ const RekapAttendance = ({navigation}) => {
   const date = Moment(form.date_input).format('YYYY-MM-DD');
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   useEffect(() => {
@@ -87,6 +87,21 @@ const RekapAttendance = ({navigation}) => {
     });
   };
 
+  const setBadgeColor = (kehadiran) => {
+    switch(kehadiran) {
+      case 'Hadir':
+        return '#286090';
+      case 'Tidak Hadir':
+        return '#A3A3A3';
+      case 'Izin':
+        return '#3BB54A';
+      case 'Sakit':
+        return '#FFC700';
+      default:
+        return '#A3A3A3';
+    }
+  }
+
   return (
     <View style={styles.page}>
       <HeaderDetail
@@ -124,6 +139,8 @@ const RekapAttendance = ({navigation}) => {
               onValueChange={(value) => setForm('kehadiran', value)}>
               <Picker.Item label="Semua" value="Semua" />
               <Picker.Item label="Hadir" value="Hadir" />
+              <Picker.Item label="Izin" value="Izin" />
+              <Picker.Item label="Sakit" value="Sakit" />
               <Picker.Item label="Tidak Hadir" value="Tidak Hadir" />
             </Picker>
           </View>
@@ -153,7 +170,7 @@ const RekapAttendance = ({navigation}) => {
                   <View style={styles.body} key={users.id}>
                     <Text style={styles.valueName}>{users.nama}</Text>
                     <View style={styles.containerBadge}>
-                      <View style={styles.badge(users.kehadiran)}>
+                      <View style={[styles.badge, {backgroundColor: setBadgeColor(users.kehadiran)}]}>
                         <Text style={styles.valueBadge}>{users.kehadiran}</Text>
                       </View>
                     </View>
@@ -300,14 +317,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: normalize(-3),
   },
-  badge: (item) => ({
+  badge: {
     width: normalize(70),
-    backgroundColor: item === 'Tidak Hadir' ? '#A3A3A3' : '#286090',
+    backgroundColor: '#A3A3A3',
     borderRadius: normalize(5),
     paddingVertical: normalize(2),
     justifyContent: 'center',
     alignItems: 'center',
-  }),
+  },
   valueName: {
     fontFamily: 'Poppins-Regular',
     fontSize: normalize(12),

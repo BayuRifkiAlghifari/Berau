@@ -8,7 +8,7 @@ import storage from '../../utils/storage';
 const Info = ({navigation}) => {
   const [data, setData] = useState([]);
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
   useEffect(() => {
     storage

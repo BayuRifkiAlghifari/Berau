@@ -27,7 +27,7 @@ const PelaporanKimia = ({navigation}) => {
   const to = Moment(form.to).format('YYYY-MM-DD');
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   const [showFrom, setShowFrom] = useState(false);

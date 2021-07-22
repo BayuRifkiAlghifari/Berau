@@ -17,7 +17,7 @@ const RekapData = ({navigation}) => {
   const [dataWidth, setDataWidth] = useState([]);
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   const [form, setForm] = useForm({

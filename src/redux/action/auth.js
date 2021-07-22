@@ -4,7 +4,7 @@ import storage from '../../utils/storage';
 import {setLoading} from './global';
 
 const API_HOST = {
-  url: 'https://berau.mogasacloth.com/api/v1',
+  url: 'https://berau.cbapps.co.id/api/v1',
 };
 
 export const signInAction = (form, navigation) => (dispatch) => {
@@ -42,6 +42,7 @@ export const signInAction = (form, navigation) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(setLoading(false));
+      console.log('ERROR LOGIN: ', err);
       console.error(err.response);
       showMessage(err?.response?.data?.meta?.message);
     });

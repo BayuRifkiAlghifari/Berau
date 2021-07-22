@@ -7,6 +7,7 @@ import {
   IcInputData,
   IcPersonalData,
   IcRekapData,
+  IcSinkron,
 } from '../../assets';
 import {Gap, HeaderDetail, Select} from '../../components';
 import storage from '../../utils/storage';
@@ -74,9 +75,9 @@ const Penugasan = ({navigation}) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.menu}
-          onPress={() => navigation.navigate('History')}>
-          <IcHistory />
-          <Text style={styles.menuText}>History</Text>
+          onPress={() => navigation.navigate('SyncData')}>
+          <IcSinkron />
+          <Text style={styles.menuText}>Sinkron Data</Text>
         </TouchableOpacity>
       </View>
       {/* Maps */}
@@ -93,7 +94,8 @@ const Penugasan = ({navigation}) => {
           followUserLocation={true}
           mapType="standard">
           {wmp.map((data, index) => {
-            return (
+            console.log('DATA LAT LONG: ', data);
+            return typeof data.lat === 'number' && typeof data.long === 'number' ? (
               <Marker
                 key={index}
                 coordinate={{
@@ -104,7 +106,7 @@ const Penugasan = ({navigation}) => {
                   <Text>{data.nama}</Text>
                 </Callout>
               </Marker>
-            );
+            ) : null;
           })}
         </MapView>
       </View>

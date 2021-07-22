@@ -13,6 +13,7 @@ import {
   Company,
   IcBack,
   IcBackHome,
+  IcHistory,
   IcLaporan,
   IcPenugasan,
   IcPersonalData,
@@ -29,7 +30,7 @@ const HomeCompany = ({navigation}) => {
   const tableData = data;
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   useEffect(() => {
@@ -125,9 +126,9 @@ const HomeCompany = ({navigation}) => {
           <TouchableOpacity
             activeOpacity={0.7}
             style={styles.menu}
-            onPress={() => navigation.navigate('SyncData')}>
-            <IcSinkron />
-            <Text style={styles.menuText}>Sinkron Data</Text>
+            onPress={() => navigation.navigate('History')}>
+            <IcHistory />
+            <Text style={styles.menuText}>History</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.content}>

@@ -15,7 +15,7 @@ import {Gap, Select} from '../../../components';
 import {showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
-const Steps = () => {
+const Steps = ({ wmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'aat',
@@ -38,22 +38,8 @@ const Steps = () => {
   const [errors, setErrors] = useState(false);
 
   useEffect(() => {
-    storage
-      .load({
-        key: 'wmp',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((ret) => {
-        setForm('wmp', ret);
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
-  }, []);
+    setForm('wmp', wmp);
+  }, [wmp]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
@@ -252,7 +238,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.TSS_unit}
                       type="TSS"
@@ -279,7 +265,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Fe_unit}
                       type="Fe"
@@ -306,7 +292,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Mn_unit}
                       type="Mn"
@@ -333,7 +319,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Debit_unit}
                       type="Debit"
@@ -497,10 +483,10 @@ const styles = StyleSheet.create({
     marginLeft: normalize(12),
   },
   leftContainer: {
-    flex: 1,
+    flex: 3,
   },
   rightContainer: {
-    flex: 1,
+    flex: 4,
   },
   timeInput: {
     borderWidth: 1,

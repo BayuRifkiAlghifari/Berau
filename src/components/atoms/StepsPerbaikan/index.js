@@ -15,36 +15,21 @@ import {Gap, Select} from '..';
 import {showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
-const StepsPerbaikan = () => {
+const StepsPerbaikan = ({ wmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'perbaikan',
     wmp: '1',
     date_input: new Date(),
-    periodical_input: 'Per Jam',
     time_input: new Date(),
     jenis_perbaikan: 'Pengerukan',
-    notif: 'Tidak',
+    notif: 'Ya',
     note: '',
   });
 
   useEffect(() => {
-    storage
-      .load({
-        key: 'wmp',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((ret) => {
-        setForm('wmp', ret);
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
-  }, []);
+    setForm('wmp', wmp);
+  }, [wmp]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
@@ -114,20 +99,6 @@ const StepsPerbaikan = () => {
               </TouchableOpacity>
             </View>
             <Gap height={20} />
-            <View style={styles.container}>
-              <View style={styles.containerLabel}>
-                <Text style={styles.label}>Periodical Input</Text>
-              </View>
-              <View style={styles.containerInput}>
-                <Select
-                  value={form.periodical_input}
-                  type="Periodical"
-                  onSelectChange={(value) => {
-                    setForm('periodical_input', value);
-                  }}
-                />
-              </View>
-            </View>
             <View style={styles.container}>
               <View style={styles.containerLabel}>
                 <Gap height={10} />
@@ -212,10 +183,6 @@ const StepsPerbaikan = () => {
                 <Text style={styles.value}>
                   {Moment(form.date_input).format('DD-MM-YYYY')}
                 </Text>
-              </View>
-              <View style={styles.summary}>
-                <Text style={styles.label}>Periodical Input</Text>
-                <Text style={styles.value}>{form.periodical_input}</Text>
               </View>
               <View style={styles.summary}>
                 <Text style={styles.label}>Time Input</Text>

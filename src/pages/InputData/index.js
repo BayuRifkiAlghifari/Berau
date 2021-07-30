@@ -112,9 +112,9 @@ const InputData = ({navigation}) => {
           )}
         </View>
         <View style={styles.containerSteps}>
-          {stepper === 'AAT' && <Steps />}
-          {stepper === 'Bahan Kimia' && <StepsKimia />}
-          {stepper === 'Perbaikan' && <StepsPerbaikan />}
+          {stepper === 'AAT' && <Steps wmp={wmp} />}
+          {stepper === 'Bahan Kimia' && <StepsKimia wmp={wmp} />}
+          {stepper === 'Perbaikan' && <StepsPerbaikan wmp={wmp} />}
         </View>
       </ScrollView>
     </View>

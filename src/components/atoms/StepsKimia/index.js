@@ -1,21 +1,26 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 import Moment from 'moment';
 import 'moment/locale/id';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import normalize from 'react-native-normalize';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {Gap, Select, TextInput} from '..';
 import {showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
-const StepsKimia = () => {
+const API_HOST = {
+  url: 'https://berau.cbapps.co.id/api/v1',
+};
+
+const StepsKimia = ({ wmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'kimia',
-    wmp: '1',
+    wmp: wmp,
     date_input: new Date(),
-    periodical_input: 'Per Jam',
+    periodical_input: 'Shift-1',
     time_input: new Date(),
     chemical: 'Kapur',
     purity: '',
@@ -27,29 +32,77 @@ const StepsKimia = () => {
     current_unit: 'L',
   });
 
+  const [dataChemical, setDataChemical] = useState([]);
+  const [prevChemical, setPrevChemical] = useState('');
   const [isValid, setIsValid] = useState(false);
   const [errors, setErrors] = useState(false);
 
-  useEffect(() => {
-    storage
-      .load({
-        key: 'wmp',
+  useEffect(async () => {
+    try {
+      const ret = await storage.load({
+        key: 'token',
         autoSync: true,
         syncInBackground: true,
         syncParams: {
           someFlag: true,
         },
-      })
-      .then((ret) => {
-        setForm('wmp', ret);
-      })
-      .catch((err) => {
-        console.error(err.response);
       });
+      const res = await axios.get(`${API_HOST.url}/chemical`, {
+        headers: {
+          Authorization: `Bearer ${ret}`,
+        },
+      })
+
+      console.log('DATA CHEMICAL: ', res.data.chemical);
+      setDataChemical(res.data.chemical);
+    } catch(err) {
+      console.log('Error Chemical: ', err);
+    }
   }, []);
+
+  useEffect(() => {
+    setForm('wmp', wmp);
+  }, [wmp]);
+
+  useEffect(() => {
+    if(form.chemical !== prevChemical) {
+      if(form.chemical === 'Kapur & Tawas') {
+        let stock = {
+          kapur: dataChemical.find(key => key.nama === 'Kapur')?.stok,
+          tawas: dataChemical.find(key => key.nama === 'Tawas')?.stok,
+        }
+        setForm('reset', '', {
+          chemical: form.chemical,
+          chemDose: [],
+          chemDose_unit: ['L', 'L'],
+          before: [stock.kapur?.toString() ?? '', stock.tawas?.toString() ?? ''],
+          before_unit: ['L', 'L'],
+          current: [],
+          current_unit: ['L', 'L'],
+        });
+      } else {
+        let stock = dataChemical.find(key => key.nama === form.chemical)?.stok
+        setForm('reset', '', {
+          chemical: form.chemical,
+          before: stock?.toString() ?? '',
+        });
+      }
+      setPrevChemical(form.chemical);
+    }
+  }, [form.chemical]);
+
+  useEffect(() => {
+    console.log('FORM: ', form);
+  }, [form]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
+
+  const handleMultipleValue = (key ,index, value) => {
+    let formNew = [...form[key]];
+    formNew[index] = value;
+    setForm(key, formNew);
+  }
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || form.date_input;
@@ -102,16 +155,28 @@ const StepsKimia = () => {
     const second = new Date(form.time_input).getSeconds();
     const id = 'kimia' + day + month + year + hour + minute + second;
 
+    let formNew = form;
+    if(formNew.chemical === 'Kapur & Tawas') {
+      formNew.purity = formNew.purity.toString();
+      formNew.chemDose = formNew.chemDose.toString();
+      formNew.chemDose_unit = formNew.chemDose_unit.toString();
+      formNew.before = formNew.before.toString();
+      formNew.before_unit = formNew.before_unit.toString();
+      formNew.current = formNew.current.toString();
+      formNew.current_unit = formNew.current_unit.toString();
+    }
+
     storage.save({
       key: 'dataLocal',
       id: id,
-      data: form,
+      data: formNew,
     });
     showMessage('Data Berhasil disimpan ke LocalStorage', 'success');
   };
 
   return (
     <View style={styles.page}>
+      <ScrollView>
       <ProgressSteps
         completedProgressBarColor="#286090"
         activeStepIconColor="#286090"
@@ -194,24 +259,58 @@ const StepsKimia = () => {
                 <Select
                   value={form.chemical}
                   type="Chemical"
+                  item={dataChemical?.map(chem => ({label: chem.nama, value: chem.nama}))}
                   onSelectChange={(value) => setForm('chemical', value)}
                 />
               </View>
             </View>
-            <View style={styles.container}>
-              <View style={styles.containerLabel}>
-                <Text style={styles.label}>% Purity</Text>
-              </View>
-              <View style={styles.containerInput}>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Input"
-                  keyboardType="number-pad"
-                  value={form.purity}
-                  onChangeText={(value) => setForm('purity', value)}
-                />
-              </View>
-            </View>
+            {form.chemical !== 'Kapur & Tawas' ?
+              <View style={styles.container}>
+                <View style={styles.containerLabel}>
+                  <Text style={styles.label}>% Purity {form.chemical}</Text>
+                </View>
+                <View style={styles.containerInput}>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Input"
+                    keyboardType="number-pad"
+                    value={form.purity}
+                    onChangeText={(value) => setForm('purity', value)}
+                  />
+                </View>
+              </View> :
+              <>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>% Purity Kapur</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Input"
+                      keyboardType="number-pad"
+                      value={form.purity[0]}
+                      onChangeText={(value) => handleMultipleValue('purity', 0, value)}
+                    />
+                  </View>
+                </View>
+                <Gap height={15} />
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>% Purity Tawas</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Input"
+                      keyboardType="number-pad"
+                      value={form.purity[1]}
+                      onChangeText={(value) => handleMultipleValue('purity', 1, value)}
+                    />
+                  </View>
+                </View>
+              </>
+            }
             <Gap height={15} />
           </View>
         </ProgressStep>
@@ -224,89 +323,273 @@ const StepsKimia = () => {
           onNext={onNextStep2}
           errors={errors}>
           <View style={styles.content}>
-            <View style={styles.container}>
-              <View style={styles.containerLabel}>
-                <Text style={styles.label}>Chem. Dose</Text>
-              </View>
-              <View style={styles.containerInput}>
-                <View style={styles.containerTimeInput}>
-                  <View style={styles.leftContainer}>
-                    <TextInput
-                      style={styles.timeInput}
-                      keyboardType="number-pad"
-                      placeholder="Input"
-                      value={form.chemDose}
-                      onChangeText={(value) => setForm('chemDose', value)}
-                    />
-                  </View>
-                  <Gap width={20} />
-                  <View style={styles.rightContainer}>
-                    <Gap height={12} />
-                    <Select
-                      value={form.chemDose_unit}
-                      type="Dose"
-                      onSelectChange={(value) =>
-                        setForm('chemDose_unit', value)
-                      }
-                    />
+            {form.chemical !== 'Kapur & Tawas' ?
+              <View style={styles.container}>
+                <View style={styles.containerLabel}>
+                  <Text style={styles.label}>Chem. Dose {form.chemical}</Text>
+                </View>
+                <View style={styles.containerInput}>
+                  <View style={styles.containerTimeInput}>
+                    <View style={styles.leftContainer}>
+                      <TextInput
+                        style={styles.timeInput}
+                        keyboardType="number-pad"
+                        placeholder="Input"
+                        value={form.chemDose}
+                        onChangeText={(value) => setForm('chemDose', value)}
+                      />
+                    </View>
+                    <Gap width={20} />
+                    <View style={styles.rightContainer}>
+                      <Gap height={12} />
+                      <Select
+                        value={form.chemDose_unit}
+                        type="Dose"
+                        onSelectChange={(value) =>
+                          setForm('chemDose_unit', value)
+                        }
+                      />
+                    </View>
                   </View>
                 </View>
-              </View>
-            </View>
-            <View style={styles.container}>
-              <View style={styles.containerLabel}>
-                <Text style={styles.label}>Stock Shift Sebelumnya</Text>
-              </View>
-              <View style={styles.containerInput}>
-                <View style={styles.containerTimeInput}>
-                  <View style={styles.leftContainer}>
-                    <TextInput
-                      style={styles.timeInput}
-                      keyboardType="number-pad"
-                      placeholder="Input"
-                      value={form.before}
-                      onChangeText={(value) => setForm('before', value)}
-                    />
+              </View> :
+              <>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Chem. Dose Kapur</Text>
                   </View>
-                  <Gap width={20} />
-                  <View style={styles.rightContainer}>
-                    <Gap height={12} />
-                    <Select
-                      value={form.before_unit}
-                      type="Before"
-                      onSelectChange={(value) => setForm('before_unit', value)}
-                    />
-                  </View>
-                </View>
-              </View>
-            </View>
-            <View style={styles.container}>
-              <View style={styles.containerLabel}>
-                <Text style={styles.label}>Stock terpakai</Text>
-              </View>
-              <View style={styles.containerInput}>
-                <View style={styles.containerTimeInput}>
-                  <View style={styles.leftContainer}>
-                    <TextInput
-                      style={styles.timeInput}
-                      keyboardType="number-pad"
-                      placeholder="Input"
-                      value={form.current}
-                      onChangeText={(value) => setForm('current', value)}
-                    />
-                  </View>
-                  <Gap width={20} />
-                  <View style={styles.rightContainer}>
-                    <Gap height={12} />
-                    <Select
-                      value={form.current_unit}
-                      type="Current"
-                      onSelectChange={(value) => setForm('current_unit', value)}
-                    />
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.chemDose[0]}
+                          onChangeText={(value) => handleMultipleValue('chemDose', 0, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.chemDose_unit[0]}
+                          type="Dose"
+                          onSelectChange={(value) =>
+                            handleMultipleValue('chemDose_unit', 0, value)
+                          }
+                        />
+                      </View>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </View>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Chem. Dose Tawas</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.chemDose[1]}
+                          onChangeText={(value) => handleMultipleValue('chemDose', 1, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.chemDose_unit[1]}
+                          type="Dose"
+                          onSelectChange={(value) =>
+                            handleMultipleValue('chemDose_unit', 1, value)
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </>
+            }
+            {form.chemical !== 'Kapur & Tawas' ?
+              <View style={styles.container}>
+                <View style={styles.containerLabel}>
+                  <Text style={styles.label}>Stock {form.chemical} Shift Sebelumnya</Text>
+                </View>
+                <View style={styles.containerInput}>
+                  <View style={styles.containerTimeInput}>
+                    <View style={styles.leftContainer}>
+                      <TextInput
+                        style={styles.timeInput}
+                        keyboardType="number-pad"
+                        placeholder="Input"
+                        value={form.before}
+                        editable={false}
+                        onChangeText={(value) => setForm('before', value)}
+                      />
+                    </View>
+                    <Gap width={20} />
+                    <View style={styles.rightContainer}>
+                      <Gap height={12} />
+                      <Select
+                        value={form.before_unit}
+                        type="Before"
+                        enabled={false}
+                        onSelectChange={(value) => setForm('before_unit', value)}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View> :
+              <>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Stock Kapur Shift Sebelumnya</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.before[0]}
+                          editable={false}
+                          onChangeText={(value) => handleMultipleValue('before', 0, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.before_unit[0]}
+                          type="Before"
+                          enabled={false}
+                          onSelectChange={(value) => handleMultipleValue('before_unit', 0, value)}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Stock Tawas Shift Sebelumnya</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.before[1]}
+                          editable={false}
+                          onChangeText={(value) => handleMultipleValue('before', 1, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.before_unit[1]}
+                          type="Before"
+                          enabled={false}
+                          onSelectChange={(value) => handleMultipleValue('before_unit', 1, value)}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </>
+            }
+            {form.chemical !== 'Kapur & Tawas' ?
+              <View style={styles.container}>
+                <View style={styles.containerLabel}>
+                  <Text style={styles.label}>{form.chemical} dipakai</Text>
+                </View>
+                <View style={styles.containerInput}>
+                  <View style={styles.containerTimeInput}>
+                    <View style={styles.leftContainer}>
+                      <TextInput
+                        style={styles.timeInput}
+                        keyboardType="number-pad"
+                        placeholder="Input"
+                        value={form.current}
+                        onChangeText={(value) => setForm('current', value)}
+                      />
+                    </View>
+                    <Gap width={20} />
+                    <View style={styles.rightContainer}>
+                      <Gap height={12} />
+                      <Select
+                        value={form.current_unit}
+                        type="Current"
+                        onSelectChange={(value) => setForm('current_unit', value)}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View> :
+              <>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Kapur dipakai</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.current[0]}
+                          onChangeText={(value) => handleMultipleValue('current', 0, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.current_unit[0]}
+                          type="Current"
+                          onSelectChange={(value) => handleMultipleValue('current_unit', 0, value)}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Tawas dipakai</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.current[1]}
+                          onChangeText={(value) => handleMultipleValue('current', 1, value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.current_unit[1]}
+                          type="Current"
+                          onSelectChange={(value) => handleMultipleValue('current_unit', 1, value)}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </>
+            }
           </View>
         </ProgressStep>
         <ProgressStep
@@ -342,32 +625,83 @@ const StepsKimia = () => {
                 <Text style={styles.labelSummary}>Chemical</Text>
                 <Text style={styles.value}>{form.chemical}</Text>
               </View>
-              <View style={styles.summary}>
-                <Text style={styles.labelSummary}>% Purity</Text>
-                <Text style={styles.value}>{form.purity}</Text>
-              </View>
-              <View style={styles.summary}>
-                <Text style={styles.labelSummary}>Stock Shift Sblm</Text>
-                <Text style={styles.value}>
-                  {form.chemDose} {form.chemDose_unit}
-                </Text>
-              </View>
-              <View style={styles.summary}>
-                <Text style={styles.labelSummary}>Stock Shift Sblm</Text>
-                <Text style={styles.value}>
-                  {form.before} {form.before_unit}
-                </Text>
-              </View>
-              <View style={styles.summary}>
-                <Text style={styles.labelSummary}>Stock Saat Ini</Text>
-                <Text style={styles.value}>
-                  {form.current} {form.current_unit}
-                </Text>
-              </View>
+              {form.chemical !== 'Kapur & Tawas' ?
+                <>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>% Purity {form.chemical}</Text>
+                    <Text style={styles.value}>{form.purity}</Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Chem. Dose {form.chemical}</Text>
+                    <Text style={styles.value}>
+                      {form.chemDose} {form.chemDose_unit}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Stock {form.chemical} Shift Sblm</Text>
+                    <Text style={styles.value}>
+                      {form.before} {form.before_unit}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>{form.chemical} dipakai</Text>
+                    <Text style={styles.value}>
+                      {form.current} {form.current_unit}
+                    </Text>
+                  </View>
+                </> :
+                <>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>% Purity Kapur</Text>
+                    <Text style={styles.value}>{form.purity[0]}</Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>% Purity Tawas</Text>
+                    <Text style={styles.value}>{form.purity[1]}</Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Chem. Dose Kapur</Text>
+                    <Text style={styles.value}>
+                      {form.chemDose[0]} {form.chemDose_unit[0]}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Chem. Dose Tawas</Text>
+                    <Text style={styles.value}>
+                      {form.chemDose[1]} {form.chemDose_unit[1]}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Stock Kapur Shift Sblm</Text>
+                    <Text style={styles.value}>
+                      {form.before[0]} {form.before_unit[0]}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Stock Tawas Shift Sblm</Text>
+                    <Text style={styles.value}>
+                      {form.before[1]} {form.before_unit[1]}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Kapur dipakai</Text>
+                    <Text style={styles.value}>
+                      {form.current[0]} {form.current_unit[0]}
+                    </Text>
+                  </View>
+                  <View style={styles.summary}>
+                    <Text style={styles.labelSummary}>Tawas dipakai</Text>
+                    <Text style={styles.value}>
+                      {form.current[1]} {form.current_unit[1]}
+                    </Text>
+                  </View>
+                </>
+              }
             </View>
           </View>
         </ProgressStep>
       </ProgressSteps>
+      </ScrollView>
     </View>
   );
 };
@@ -468,6 +802,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
     marginRight: normalize(-20),
+    color: '#020202'
   },
   card: {
     width: '90%',

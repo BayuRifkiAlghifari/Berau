@@ -19,7 +19,7 @@ const StepsPerbaikan = ({ wmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'perbaikan',
-    wmp: '1',
+    wmp: wmp,
     date_input: new Date(),
     time_input: new Date(),
     jenis_perbaikan: 'Pengerukan',

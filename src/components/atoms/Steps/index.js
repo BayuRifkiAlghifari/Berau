@@ -19,9 +19,9 @@ const Steps = ({ wmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'aat',
-    wmp: '1',
+    wmp: wmp,
     date_input: new Date(),
-    periodical_input: 'Per Jam',
+    periodical_input: 'Shift-1',
     time_input: new Date(),
     sampling_point: 'Sebelum titik Pengapuran',
     weather_condition: 'Cerah',

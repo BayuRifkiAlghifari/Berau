@@ -65,35 +65,34 @@ const StepsKimia = ({ wmp }) => {
   }, [wmp]);
 
   useEffect(() => {
-    if(form.chemical !== prevChemical) {
-      if(form.chemical === 'Kapur & Tawas') {
-        let stock = {
-          kapur: dataChemical.find(key => key.nama === 'Kapur')?.stok,
-          tawas: dataChemical.find(key => key.nama === 'Tawas')?.stok,
+    if(dataChemical[0]) {
+      if(form.chemical !== prevChemical) {
+        if(form.chemical === 'Kapur & Tawas') {
+          let stock = {
+            kapur: dataChemical.find(key => key.nama === 'Kapur')?.stok,
+            tawas: dataChemical.find(key => key.nama === 'Tawas')?.stok,
+          }
+          setForm('reset', '', {
+            chemical: form.chemical,
+            chemDose: [],
+            chemDose_unit: ['L', 'L'],
+            before: [stock.kapur?.toString() ?? '', stock.tawas?.toString() ?? ''],
+            before_unit: ['L', 'L'],
+            current: [],
+            current_unit: ['L', 'L'],
+          });
+        } else {
+          let stock = dataChemical.find(key => key.nama === form.chemical)?.stok
+          setForm('reset', '', {
+            chemical: form.chemical,
+            before: stock?.toString() ?? '',
+          });
         }
-        setForm('reset', '', {
-          chemical: form.chemical,
-          chemDose: [],
-          chemDose_unit: ['L', 'L'],
-          before: [stock.kapur?.toString() ?? '', stock.tawas?.toString() ?? ''],
-          before_unit: ['L', 'L'],
-          current: [],
-          current_unit: ['L', 'L'],
-        });
-      } else {
-        let stock = dataChemical.find(key => key.nama === form.chemical)?.stok
-        setForm('reset', '', {
-          chemical: form.chemical,
-          before: stock?.toString() ?? '',
-        });
+        setPrevChemical(form.chemical);
+        setIsValid(false);
       }
-      setPrevChemical(form.chemical);
     }
-  }, [form.chemical]);
-
-  useEffect(() => {
-    console.log('FORM: ', form);
-  }, [form]);
+  }, [form.chemical, dataChemical]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
@@ -116,7 +115,7 @@ const StepsKimia = ({ wmp }) => {
   };
 
   const onNextStep1 = () => {
-    if (form.purity.length > 0) {
+    if (form.purity || form.purity[0] && form.purity[1]) {
       setIsValid(true);
       setErrors(false);
     } else {

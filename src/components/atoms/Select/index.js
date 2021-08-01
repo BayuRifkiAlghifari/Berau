@@ -287,6 +287,7 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             <Picker.Item label="Pengerukan" value="Pengerukan" />
             <Picker.Item label="Alat Sparing" value="Alat Sparing" />
             <Picker.Item label="Inspeksi" value="Inspeksi" />
+            <Picker.Item label="Tidak ada perbaikan" value="Tidak ada perbaikan" />
           </Picker>
         </View>
       )}

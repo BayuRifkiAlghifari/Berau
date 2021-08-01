@@ -31,6 +31,10 @@ const StepsPerbaikan = ({ wmp }) => {
     setForm('wmp', wmp);
   }, [wmp]);
 
+  useEffect(() => {
+    setForm('notif', form.jenis_perbaikan === 'Tidak ada perbaikan' ? 'Tidak' : 'Ya');
+  }, [form.jenis_perbaikan]);
+
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
 

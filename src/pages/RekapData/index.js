@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Moment from 'moment';
 import 'moment/locale/id';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import normalize from 'react-native-normalize';
 import {IcRekapData} from '../../assets';
 import {Gap, HeaderDetail, Select, Table} from '../../components';
@@ -22,7 +22,12 @@ const RekapData = ({navigation}) => {
 
   const [form, setForm] = useForm({
     wmp: '1',
-    jenis_data: 'Data Pemakaian Kapur',
+    jenis_data: [
+      'Data Pemakaian Kapur',
+      'Data Pemakaian Tawas',
+      'Data Stok Kapur',
+      'Data Stok Tawas',
+    ],
     from: new Date(),
     to: new Date(),
   });
@@ -63,132 +68,147 @@ const RekapData = ({navigation}) => {
     setShowTo(false);
   };
 
-  const onFilter = () => {
-    storage
-      .load({
-        key: 'token',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
+  const onFilter = async () => {
+    const ret = await storage.load({
+      key: 'token',
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        someFlag: true,
+      },
+    });
+
+    let header = [];
+    let data = [];
+    let width = [];
+
+    const getData = (jenis_data) => Axios.get(
+      `${API_HOST.url}/report/area-tambang?id_wmp=${form.wmp}&jenis_data=${jenis_data}&from=${from}&to=${to}`,
+      {
+        headers: {
+          Authorization: `Bearer ${ret}`,
         },
-      })
-      .then((ret) => {
-        Axios.get(
-          `${API_HOST.url}/report/area-tambang?id_wmp=${form.wmp}&jenis_data=${form.jenis_data}&from=${from}&to=${to}`,
-          {
-            headers: {
-              Authorization: `Bearer ${ret}`,
-            },
-          },
-        )
-          .then((res) => {
-            setDataHeader(res.data.data_field);
-            setData(res.data.data_rows);
-            setDataWidth(res.data.data_width);
-          })
-          .catch((err) => {
-            console.error(err.response);
-          });
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
+      }
+    ).then(res => {
+      header.push(res.data.data_field);
+      data.push(res.data.data_rows);
+      width.push(res.data.data_width);  
+    }).catch(err => console.log('GET DATA ERROR: ', err));
+
+    // call api
+    await getData(form.jenis_data[0])
+    await getData(form.jenis_data[1])
+    await getData(form.jenis_data[2])
+    await getData(form.jenis_data[3])
+    // set state
+    setDataHeader(header);
+    setData(data);
+    setDataWidth(width);
   };
 
   return (
     <View style={styles.page}>
-      <HeaderDetail
-        onPress={() => navigation.goBack()}
-        company="PT. Berau Coal"
-      />
-      <Gap height={11} />
-      <View style={styles.select}>
-        <Select
-          value={penugasan}
-          type="Penugasan"
-          onSelectChange={(value) => setPenugasan(value)}
-          enabled={false}
+      <ScrollView>
+        <HeaderDetail
+          onPress={() => navigation.goBack()}
+          company="PT. Berau Coal"
         />
-      </View>
-      <View style={styles.containerMenu}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.menu}
-          onPress={() => navigation.navigate('RekapData')}>
-          <IcRekapData />
-          <Gap height={2} />
-          <Text style={styles.menuText}>Rekap Data</Text>
-        </TouchableOpacity>
-        <View style={styles.wmp}>
-          <View style={styles.select}>
-            <Select
-              value={form.wmp}
-              type="WMP"
-              onSelectChange={(value) => setForm('wmp', value)}
-            />
-            <Select
-              value={form.jenis_data}
-              type="Jenis Data"
-              onSelectChange={(value) => setForm('jenis_data', value)}
-            />
-          </View>
-          <View style={styles.filter}>
-            <TouchableOpacity
-              style={styles.calendar}
-              onPress={() => setShowFrom(true)}>
-              <Text style={styles.textCalendar}>
-                {Moment(form.from).format('DD-MM-YYYY')}
-              </Text>
-              {showFrom && (
-                <DateTimePicker
-                  testID="dateFrom"
-                  value={form.from}
-                  mode="date"
-                  is24Hour={true}
-                  display="default"
-                  onChange={onChangeFrom}
-                />
-              )}
-            </TouchableOpacity>
-            <View style={styles.to}>
-              <Text>to</Text>
+        <Gap height={11} />
+        <View style={styles.select}>
+          <Select
+            value={penugasan}
+            type="Penugasan"
+            onSelectChange={(value) => setPenugasan(value)}
+            enabled={false}
+          />
+        </View>
+        <View style={styles.containerMenu}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.menu}
+            onPress={() => navigation.navigate('RekapData')}>
+            <IcRekapData />
+            <Gap height={2} />
+            <Text style={styles.menuText}>Rekap Data</Text>
+          </TouchableOpacity>
+          <View style={styles.wmp}>
+            <View style={styles.select}>
+              <Select
+                value={form.wmp}
+                type="WMP"
+                onSelectChange={(value) => setForm('wmp', value)}
+              />
+              <Select
+                // value={form.jenis_data}
+                type="Jenis Data Material"
+                enabled={false}
+                onSelectChange={(value) => setForm('jenis_data', value)}
+              />
             </View>
-            <TouchableOpacity
-              style={styles.calendar}
-              onPress={() => setShowTo(true)}>
-              <Text style={styles.textCalendar}>
-                {Moment(form.to).format('DD-MM-YYYY')}
-              </Text>
-              {showTo && (
-                <DateTimePicker
-                  testID="dateTo"
-                  value={form.to}
-                  mode="date"
-                  is24Hour={true}
-                  display="default"
-                  onChange={onChangeTo}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
-          <View style={styles.generate}>
-            <Gap width={15} />
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={styles.button}
-              onPress={onFilter}>
-              <Text style={styles.text}>Generate</Text>
-            </TouchableOpacity>
+            <View style={styles.filter}>
+              <TouchableOpacity
+                style={styles.calendar}
+                onPress={() => setShowFrom(true)}>
+                <Text style={styles.textCalendar}>
+                  {Moment(form.from).format('DD-MM-YYYY')}
+                </Text>
+                {showFrom && (
+                  <DateTimePicker
+                    testID="dateFrom"
+                    value={form.from}
+                    mode="date"
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChangeFrom}
+                  />
+                )}
+              </TouchableOpacity>
+              <View style={styles.to}>
+                <Text>to</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.calendar}
+                onPress={() => setShowTo(true)}>
+                <Text style={styles.textCalendar}>
+                  {Moment(form.to).format('DD-MM-YYYY')}
+                </Text>
+                {showTo && (
+                  <DateTimePicker
+                    testID="dateTo"
+                    value={form.to}
+                    mode="date"
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChangeTo}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            <View style={styles.generate}>
+              <Gap width={15} />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.button}
+                onPress={onFilter}>
+                <Text style={styles.text}>Generate</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-      {/* Content */}
-      <Table dataHeader={dataHeader} data={data} dataWidth={dataWidth} />
-      <Gap height={25} />
-      {/* <View style={styles.download}>
-        <Button icon={<IcDownload />} text="DOWNLOAD" />
-      </View> */}
+        {/* Content */}
+        <Gap height={25} />
+        {
+          dataHeader.map((dataHeader, index) => (
+            <>
+              <Table key={index.toString()} dataHeader={dataHeader} data={data[index]} dataWidth={dataWidth[index]} />
+              <Gap height={25} />
+            </>
+          ))
+        }
+        {/* <View style={styles.download}>
+          <Button icon={<IcDownload />} text="DOWNLOAD" />
+        </View> */}
+      </ScrollView>
     </View>
   );
 };

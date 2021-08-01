@@ -8,6 +8,7 @@ import Steps from './Steps';
 import StepsKimia from './StepsKimia';
 import StepsPerbaikan from './StepsPerbaikan';
 import Table from './Table';
+import ButtonLarge from './ButtonLarge';
 
 export {
   TextInput,
@@ -20,4 +21,5 @@ export {
   StepsKimia,
   StepsPerbaikan,
   Table,
+  ButtonLarge,
 };

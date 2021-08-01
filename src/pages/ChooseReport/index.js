@@ -11,24 +11,27 @@ const ChooseReport = ({navigation}) => {
         company="PT. Berau Coal"
       />
       <View style={styles.container}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.button}
-          onPress={() => navigation.navigate('PelaporanAAT')}>
-          <Text style={styles.text}>AAT</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.button}
-          onPress={() => navigation.navigate('PelaporanKimia')}>
-          <Text style={styles.text}>Bahan Kimia</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.button}
-          onPress={() => navigation.navigate('Pelaporan')}>
-          <Text style={styles.text}>Perbaikan</Text>
-        </TouchableOpacity>
+        <Text style={styles.label}>Pilih Jenis Laporan</Text>
+        <View style={styles.action}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.button}
+            onPress={() => navigation.navigate('PelaporanAAT')}>
+            <Text style={styles.text}>AAT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.button}
+            onPress={() => navigation.navigate('PelaporanKimia')}>
+            <Text style={styles.text}>Bahan Kimia</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.button}
+            onPress={() => navigation.navigate('Pelaporan')}>
+            <Text style={styles.text}>Perbaikan</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -42,6 +45,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   container: {
+    paddingHorizontal: normalize(10),
+    paddingVertical: normalize(20),
+    marginHorizontal: normalize(14),
+    marginVertical: normalize(24),
+    backgroundColor: '#FFFF',
+    elevation: 8,
+    borderRadius: 8
+  },
+  label: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: normalize(16),
+    paddingHorizontal: normalize(10),
+    marginTop: normalize(8)
+  },
+  action: {
     // flex: 1,
     flexDirection: 'row',
   },

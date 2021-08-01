@@ -265,8 +265,8 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             {item ?
-              item.map(item => (
-                <Picker.Item label={item.label} value={item.value} />
+              item.map((item, index) => (
+                <Picker.Item key={index.toString()} label={item.label} value={item.value} />
               )) :
               <>
                 <Picker.Item label="Kapur" value="Kapur" />
@@ -394,6 +394,17 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
           </Picker>
         </View>
       )}
+      {type === 'Status Perbaikan' && (
+        <View style={styles.containerSelectMicro}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="Open" value="Open" />
+            <Picker.Item label="Close" value="Close" />
+          </Picker>
+        </View>
+      )}
     </View>
   );
 };
@@ -435,6 +446,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     marginTop: normalize(-8),
     marginLeft: normalize(-12),
+  },
+  containerSelectMicro: {
+    width: normalize(130),
+    borderWidth: 1,
+    borderColor: '#286090',
+    borderRadius: normalize(10),
+    paddingHorizontal: 2,
+    backgroundColor: '#FFFFFF',
   },
   select: {
     height: normalize(40),

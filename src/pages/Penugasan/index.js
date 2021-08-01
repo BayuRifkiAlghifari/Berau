@@ -27,13 +27,32 @@ const Penugasan = ({navigation}) => {
         },
       })
       .then((res) => {
-        setPenugasan(res.nama);
+        setPenugasan(setPenugasanValue(res.nama));
         setWmp(res.wmp);
       })
       .catch((err) => {
         console.error(err.response);
       });
   }, []);
+
+  const setPenugasanValue = (value) => {
+    switch(value) {
+      case 'LMO':
+        return 'Area Tambang LMO';
+      case 'BMO I':
+        return 'Area Tambang BMO I';
+      case 'BMO II':
+        return 'Area Tambang BMO II';
+      case 'SMO':
+        return 'Area Tambang SMO';
+      case 'BEE':
+        return 'Area Tambang BEE';
+      case 'GMO':
+        return 'Area Tambang GMO';
+      default:
+        return 'Area Tambang LMO';
+    }
+  }
 
   return (
     <View style={styles.page}>
@@ -86,16 +105,15 @@ const Penugasan = ({navigation}) => {
           style={styles.map}
           showsUserLocation={true}
           initialRegion={{
-            latitude: -4.8021423,
-            longitude: 107.5284487,
-            latitudeDelta: 35,
-            longitudeDelta: 35,
+            latitude: 0.6148474716680845,
+            longitude: 116.15300640688237,
+            latitudeDelta: 5,
+            longitudeDelta: 5,
           }}
           followUserLocation={true}
           mapType="standard">
           {wmp.map((data, index) => {
-            console.log('DATA LAT LONG: ', data);
-            return typeof data.lat === 'number' && typeof data.long === 'number' ? (
+            return data.lat !== '-' && data.long !== '-' ? (
               <Marker
                 key={index}
                 coordinate={{

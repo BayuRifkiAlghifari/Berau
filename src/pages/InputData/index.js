@@ -17,6 +17,7 @@ import {
   StepsKimia,
   StepsPerbaikan,
 } from '../../components';
+import { setPenugasanValue } from '../../utils';
 import storage from '../../utils/storage';
 
 const InputData = ({navigation}) => {
@@ -34,8 +35,9 @@ const InputData = ({navigation}) => {
           someFlag: true,
         },
       })
-      .then((ret) => {
-        setPenugasan(ret.nama);
+      .then((res) => {
+        setPenugasan(setPenugasanValue(res.nama));
+        setWmp(res.wmp);
       })
       .catch((err) => {
         console.error(err.response);

@@ -11,24 +11,27 @@ const Info = ({navigation}) => {
     url: 'https://berau.cbapps.co.id/api/v1',
   };
   useEffect(() => {
-    storage
-      .load({
-        key: 'token',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((ret) => {
-        Axios.get(`${API_HOST.url}/notifikasi`, {
-          headers: {
-            Authorization: `Bearer ${ret}`,
+    navigation.addListener('focus', () => {
+      storage
+        .load({
+          key: 'token',
+          autoSync: true,
+          syncInBackground: true,
+          syncParams: {
+            someFlag: true,
           },
-        }).then((res) => {
-          setData(res.data.notif);
+        })
+        .then((ret) => {
+          Axios.get(`${API_HOST.url}/notifikasi`, {
+            headers: {
+              Authorization: `Bearer ${ret}`,
+            },
+          }).then((res) => {
+            console.log('DATA NOTIF: ', res.data.notif);
+            setData(res.data.notif);
+          });
         });
-      });
+    })
   }, []);
   return (
     <View style={styles.page}>

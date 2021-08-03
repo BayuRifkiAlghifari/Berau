@@ -22,6 +22,7 @@ import storage from '../../utils/storage';
 
 const InputData = ({navigation}) => {
   const [penugasan, setPenugasan] = useState('Area Tambang LMO');
+  const [dataWmp, setDataWmp] = useState([]);
   const [wmp, setWmp] = useState('1');
   const [stepper, setStepper] = useState('AAT');
 
@@ -36,8 +37,10 @@ const InputData = ({navigation}) => {
         },
       })
       .then((res) => {
+        console.log('RES WMP: ', res.wmp);
         setPenugasan(setPenugasanValue(res.nama));
-        setWmp(res.wmp);
+        setWmp(res.wmp[0].id);
+        setDataWmp(res.wmp);
       })
       .catch((err) => {
         console.error(err.response);
@@ -114,9 +117,9 @@ const InputData = ({navigation}) => {
           )}
         </View>
         <View style={styles.containerSteps}>
-          {stepper === 'AAT' && <Steps wmp={wmp} />}
-          {stepper === 'Bahan Kimia' && <StepsKimia wmp={wmp} />}
-          {stepper === 'Perbaikan' && <StepsPerbaikan wmp={wmp} />}
+          {stepper === 'AAT' && <Steps wmp={wmp} dataWmp={dataWmp} />}
+          {stepper === 'Bahan Kimia' && <StepsKimia wmp={wmp} dataWmp={dataWmp} />}
+          {stepper === 'Perbaikan' && <StepsPerbaikan wmp={wmp} dataWmp={dataWmp} />}
         </View>
       </ScrollView>
     </View>

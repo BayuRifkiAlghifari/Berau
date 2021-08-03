@@ -7,14 +7,14 @@ import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native
 import normalize from 'react-native-normalize';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {Gap, Select, TextInput} from '..';
-import {showMessage, useForm} from '../../../utils';
+import {findWmpDetail, showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
 const API_HOST = {
   url: 'https://berau.cbapps.co.id/api/v1',
 };
 
-const StepsKimia = ({ wmp }) => {
+const StepsKimia = ({ wmp, dataWmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'kimia',
@@ -422,7 +422,7 @@ const StepsKimia = ({ wmp }) => {
                   <View style={styles.containerTimeInput}>
                     <View style={styles.leftContainer}>
                       <TextInput
-                        style={styles.timeInput}
+                        style={[styles.timeInput, styles.disableInfo]}
                         keyboardType="number-pad"
                         placeholder="Input"
                         value={form.before}
@@ -452,7 +452,7 @@ const StepsKimia = ({ wmp }) => {
                     <View style={styles.containerTimeInput}>
                       <View style={styles.leftContainer}>
                         <TextInput
-                          style={styles.timeInput}
+                          style={[styles.timeInput, styles.disableInfo]}
                           keyboardType="number-pad"
                           placeholder="Input"
                           value={form.before[0]}
@@ -481,7 +481,7 @@ const StepsKimia = ({ wmp }) => {
                     <View style={styles.containerTimeInput}>
                       <View style={styles.leftContainer}>
                         <TextInput
-                          style={styles.timeInput}
+                          style={[styles.timeInput, styles.disableInfo]}
                           keyboardType="number-pad"
                           placeholder="Input"
                           value={form.before[1]}
@@ -602,7 +602,7 @@ const StepsKimia = ({ wmp }) => {
             <View style={styles.card}>
               <View style={styles.summary}>
                 <Text style={styles.labelSummary}>WMP</Text>
-                <Text style={styles.value}>{form.wmp}</Text>
+                <Text style={styles.value}>{findWmpDetail(form.wmp, dataWmp)?.nama}</Text>
               </View>
               <View style={styles.summary}>
                 <Text style={styles.labelSummary}>Date Input</Text>
@@ -832,4 +832,9 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: '#020202',
   },
+  disableInfo: {
+    color: '#020202',
+    borderColor: '#A3A3A3',
+    fontWeight: 'bold'
+  }
 });

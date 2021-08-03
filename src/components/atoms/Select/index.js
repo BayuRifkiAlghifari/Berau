@@ -399,6 +399,7 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
           <Picker
             selectedValue={value}
             style={styles.select}
+            enabled={enabled}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             <Picker.Item label="Open" value="Open" />
             <Picker.Item label="Close" value="Close" />

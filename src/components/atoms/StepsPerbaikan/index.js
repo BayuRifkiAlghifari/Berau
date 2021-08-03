@@ -12,10 +12,10 @@ import {
 import normalize from 'react-native-normalize';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {Gap, Select} from '..';
-import {showMessage, useForm} from '../../../utils';
+import {findWmpDetail, showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
-const StepsPerbaikan = ({ wmp }) => {
+const StepsPerbaikan = ({ wmp, dataWmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'perbaikan',
@@ -28,6 +28,7 @@ const StepsPerbaikan = ({ wmp }) => {
   });
 
   useEffect(() => {
+    console.log('WMP: ', wmp);
     setForm('wmp', wmp);
   }, [wmp]);
 
@@ -180,7 +181,7 @@ const StepsPerbaikan = ({ wmp }) => {
             <View style={styles.card}>
               <View style={styles.summary}>
                 <Text style={styles.label}>WMP</Text>
-                <Text style={styles.value}>{form.wmp}</Text>
+                <Text style={styles.value}>{findWmpDetail(form.wmp, dataWmp)?.nama}</Text>
               </View>
               <View style={styles.summary}>
                 <Text style={styles.label}>Date Input</Text>

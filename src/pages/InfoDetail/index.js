@@ -33,7 +33,25 @@ const InfoDetail = ({route}) => {
   }, []);
 
   useEffect(() => {
-    console.log('PARAMS: ', route.params);
+    let { id } = route.params;
+    storage
+      .load({
+        key: 'token',
+        autoSync: true,
+        syncInBackground: true,
+        syncParams: {
+          someFlag: true,
+        },
+      })
+      .then(ret => {
+        axios.get(`${API_HOST.url}/perbaikan/${id}`, {
+          headers: {
+            Authorization: `Bearer ${ret}`,
+          },
+        }).then((res) => {
+          setData(res.data.perbaikan);
+        });
+      })
     setData(route.params);
   }, [route.params]);
 
@@ -86,14 +104,14 @@ const InfoDetail = ({route}) => {
       <Header />
       <View style={styles.container}>
         <View style={styles.card}>
-          <Text style={styles.title}>{data.keterangan}</Text>
+          <Text style={styles.title}>{data?.keterangan}</Text>
           <Gap height={25} />
           {(data && me) && (
             <View>
               <View style={styles.content}>
                 <Text style={styles.label}>WMP</Text>
                 <Text style={styles.colon}>:</Text>
-                <Text style={styles.value}>{data.id_wmp}</Text>
+                <Text style={styles.value}>{data.wmp?.nama}</Text>
               </View>
               <View style={styles.content}>
                 <Text style={styles.label}>Tanggal Perbaikan</Text>
@@ -118,7 +136,7 @@ const InfoDetail = ({route}) => {
               <View style={styles.content}>
                 <Text style={styles.label}>Status</Text>
                 <Text style={styles.colon}>:</Text>
-                {data.user.id === me.id ?
+                {data.user_id === me.id ?
                   <View style={styles.value}>
                     {!status.isLoading ?
                       <Select

@@ -27,25 +27,32 @@ const Info = ({navigation}) => {
               Authorization: `Bearer ${ret}`,
             },
           }).then((res) => {
-            console.log('DATA NOTIF: ', res.data.notif);
-            setData(res.data.notif);
+            console.log('DATA NOTIF: ', res.data.notif.data);
+            setData(res.data.notif.data);
           });
         });
     })
   }, []);
+
+  const directDetailNotif = (item) => {
+    if(item.notif_type.toLowerCase() === 'perbaikan') {
+      navigation.navigate('InfoDetail', { id: item.id });
+    }
+  }
+
   return (
     <View style={styles.page}>
       <Header />
       <View style={styles.container}>
         <View style={styles.card}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {data.map((item, index) => {
+            {data?.map((item, index) => {
               return (
                 <InfoList
                   key={index}
-                  text={item.keterangan}
+                  text={item.notif_title}
                   active
-                  onPress={() => navigation.navigate('InfoDetail', item)}
+                  onPress={() => directDetailNotif(item)}
                 />
               );
             })}

@@ -8,7 +8,7 @@ import {BarChart} from 'react-native-chart-kit';
 import normalize from 'react-native-normalize';
 import {IcRekapData} from '../../assets';
 import {Gap, HeaderDetail, Select} from '../../components';
-import {useForm} from '../../utils';
+import {setPenugasanValue, useForm} from '../../utils';
 import storage from '../../utils/storage';
 
 const PelaporanAAT = ({navigation}) => {
@@ -66,7 +66,7 @@ const PelaporanAAT = ({navigation}) => {
         },
       })
       .then(res => {
-        setPenugasan(res.nama);
+        setPenugasan(setPenugasanValue(res.nama));
       })
       .catch(err => {
         console.error(err.response);

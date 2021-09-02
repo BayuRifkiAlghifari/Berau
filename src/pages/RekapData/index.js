@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Moment from 'moment';
 import 'moment/locale/id';
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import normalize from 'react-native-normalize';
 import {IcRekapData} from '../../assets';
 import {Gap, HeaderDetail, Select, Table} from '../../components';
@@ -31,6 +31,12 @@ const RekapData = ({navigation}) => {
     from: new Date(),
     to: new Date(),
   });
+  const [status, setStatus] = useState({
+    isLoading: false,
+    isSuccess: false,
+    isFailure: false,
+  });
+  const [showData, setShowData] = useState(false);
 
   const from = Moment(form.from).format('YYYY-MM-DD');
   const to = Moment(form.to).format('YYYY-MM-DD');
@@ -46,12 +52,17 @@ const RekapData = ({navigation}) => {
         },
       })
       .then((res) => {
-        setPenugasan(res.nama);
+        setPenugasan(setPenugasanValue(res.nama));
+        setForm('wmp', res.wmp);
       })
       .catch((err) => {
         console.error(err.response);
       });
   }, []);
+
+  useEffect(() => {
+    setShowData(!status.isLoading && status.isSuccess && !status.isFailure ? true : false);
+  }, [status]);
 
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
@@ -69,41 +80,60 @@ const RekapData = ({navigation}) => {
   };
 
   const onFilter = async () => {
-    const ret = await storage.load({
-      key: 'token',
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        someFlag: true,
-      },
-    });
-
-    let header = [];
-    let data = [];
-    let width = [];
-
-    const getData = (jenis_data) => Axios.get(
-      `${API_HOST.url}/report/area-tambang?id_wmp=${form.wmp}&jenis_data=${jenis_data}&from=${from}&to=${to}`,
-      {
-        headers: {
-          Authorization: `Bearer ${ret}`,
+    try {
+      const ret = await storage.load({
+        key: 'token',
+        autoSync: true,
+        syncInBackground: true,
+        syncParams: {
+          someFlag: true,
         },
-      }
-    ).then(res => {
-      header.push(res.data.data_field);
-      data.push(res.data.data_rows);
-      width.push(res.data.data_width);  
-    }).catch(err => console.log('GET DATA ERROR: ', err));
-
-    // call api
-    await getData(form.jenis_data[0])
-    await getData(form.jenis_data[1])
-    await getData(form.jenis_data[2])
-    await getData(form.jenis_data[3])
-    // set state
-    setDataHeader(header);
-    setData(data);
-    setDataWidth(width);
+      });
+  
+      let header = [];
+      let data = [];
+      let width = [];
+  
+      const getData = (jenis_data) => Axios.get(
+        `${API_HOST.url}/report/area-tambang?id_wmp=${form.wmp}&jenis_data=${jenis_data}&from=${from}&to=${to}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ret}`,
+          },
+        }
+      ).then(res => {
+        header.push(res.data.data_field);
+        data.push(res.data.data_rows);
+        width.push(res.data.data_width);  
+      }).catch(err => console.log('GET DATA ERROR: ', err));
+  
+      // call api
+      setStatus({
+        isLoading: true,
+        isSuccess: false,
+        isFailure: false,
+      });
+      await getData(form.jenis_data[0])
+      await getData(form.jenis_data[1])
+      await getData(form.jenis_data[2])
+      await getData(form.jenis_data[3])
+      // set state
+      setDataHeader(header);
+      setData(data);
+      setDataWidth(width);
+      setStatus({
+        isLoading: false,
+        isSuccess: true,
+        isFailure: false,
+      });
+    } catch(err) {
+      console.log(err);
+      setStatus({
+        isLoading: false,
+        isSuccess: false,
+        isFailure: true,
+      });
+    }
   };
 
   return (
@@ -197,7 +227,7 @@ const RekapData = ({navigation}) => {
         </View>
         {/* Content */}
         <Gap height={25} />
-        {
+        {showData &&
           dataHeader.map((dataHeader, index) => (
             <>
               <Table key={index.toString()} dataHeader={dataHeader} data={data[index]} dataWidth={dataWidth[index]} />
@@ -205,6 +235,11 @@ const RekapData = ({navigation}) => {
             </>
           ))
         }
+        {status.isLoading && (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="'#286090" />
+          </View>
+        )}
         {/* <View style={styles.download}>
           <Button icon={<IcDownload />} text="DOWNLOAD" />
         </View> */}
@@ -288,4 +323,8 @@ const styles = StyleSheet.create({
     paddingTop: normalize(15),
     marginLeft: normalize(7),
   },
+  loading: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

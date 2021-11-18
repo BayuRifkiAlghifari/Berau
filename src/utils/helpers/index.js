@@ -2,6 +2,8 @@ export const setPenugasanValue = (value) => {
   switch(value) {
     case 'LMO':
       return 'Area Tambang LMO';
+    case 'BMO':
+      return 'Area Tambang BMO';
     case 'BMO I':
       return 'Area Tambang BMO I';
     case 'BMO II':

@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
     padding: normalize(5),
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   card: {
     width: '80%',

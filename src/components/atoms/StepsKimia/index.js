@@ -804,6 +804,7 @@ const styles = StyleSheet.create({
     padding: normalize(8),
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   textInput: {
     borderWidth: 1,
@@ -813,7 +814,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
     marginRight: normalize(-20),
-    color: '#020202'
+    color: '#020202',
+    fontWeight: 'bold',
   },
   card: {
     width: '90%',

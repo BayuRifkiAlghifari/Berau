@@ -496,6 +496,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
     height: normalize(40),
+    fontWeight: 'bold',
   },
   card: {
     width: '90%',

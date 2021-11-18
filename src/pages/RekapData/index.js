@@ -7,7 +7,7 @@ import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View}
 import normalize from 'react-native-normalize';
 import {IcRekapData} from '../../assets';
 import {Gap, HeaderDetail, Select, Table} from '../../components';
-import {useForm} from '../../utils';
+import {setPenugasanValue, useForm} from '../../utils';
 import storage from '../../utils/storage';
 
 const RekapData = ({navigation}) => {

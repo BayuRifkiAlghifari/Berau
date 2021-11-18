@@ -33,7 +33,7 @@ const Steps = ({ wmp, dataWmp }) => {
     Mn: '-',
     Mn_unit: 'mg/L',
     Debit: '',
-    Debit_unit: 'm3/detik',
+    Debit_unit: 'm3/hari',
   });
   const [errors, setErrors] = useState(false);
 

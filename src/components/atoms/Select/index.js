@@ -36,6 +36,10 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             enabled={enabled}>
             <Picker.Item label="Area Tambang LMO" value="Area Tambang LMO" />
             <Picker.Item
+              label="Area Tambang BMO"
+              value="Area Tambang BMO"
+            />
+            <Picker.Item
               label="Area Tambang BMO I"
               value="Area Tambang BMO I"
             />
@@ -170,8 +174,8 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
               value="Pintu Masuk Sedement Pond"
             />
             <Picker.Item
-              label="Titik Penataan (Pintu Effluent)"
-              value="Titik Penataan (Pintu Effluent)"
+              label="Titik Penaatan (Pintu Effluent)"
+              value="Titik Penaatan (Pintu Effluent)"
             />
             <Picker.Item
               label="Titik Lainnya (diSPORING)"
@@ -248,8 +252,8 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
               value="Pintu Masuk Sedement Pond"
             />
             <Picker.Item
-              label="Titik Penataan (Pintu Effluent)"
-              value="Titik Penataan (Pintu Effluent)"
+              label="Titik Penaatan (Pintu Effluent)"
+              value="Titik Penaatan (Pintu Effluent)"
             />
             <Picker.Item
               label="Titik Lainnya (diSPORING)"
@@ -352,7 +356,6 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="m3/detik" value="m3/detik" />
             <Picker.Item label="m3/hari" value="m3/hari" />
           </Picker>
         </View>
@@ -391,6 +394,26 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             <Picker.Item label="L" value="L" />
             <Picker.Item label="Kg" value="Kg" />
             <Picker.Item label="Karung" value="Karung" />
+          </Picker>
+        </View>
+      )}
+      {type === 'Kg' && (
+        <View style={styles.containerSelectSmall}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="Kg" value="Kg" />
+          </Picker>
+        </View>
+      )}
+      {type === 'L' && (
+        <View style={styles.containerSelectSmall}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="L" value="L" />
           </Picker>
         </View>
       )}

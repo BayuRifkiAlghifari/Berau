@@ -173,6 +173,16 @@ const StepsKimia = ({ wmp, dataWmp }) => {
     showMessage('Data Berhasil disimpan ke LocalStorage', 'success');
   };
 
+  const setSelectUnit = (chemical) => {
+    if (chemical === 'Liquid') {
+      return 'L';
+    } else if (chemical?.includes('Kapur') || chemical?.includes('Tawas')) {
+      return 'Kg';
+    } else {
+      return 'Dose';
+    }
+  }
+
   return (
     <View style={styles.page}>
       <ScrollView>
@@ -323,37 +333,39 @@ const StepsKimia = ({ wmp, dataWmp }) => {
           errors={errors}>
           <View style={styles.content}>
             {form.chemical !== 'Kapur & Tawas' ?
-              <View style={styles.container}>
-                <View style={styles.containerLabel}>
-                  <Text style={styles.label}>Chem. Dose {form.chemical}</Text>
-                </View>
-                <View style={styles.containerInput}>
-                  <View style={styles.containerTimeInput}>
-                    <View style={styles.leftContainer}>
-                      <TextInput
-                        style={styles.timeInput}
-                        keyboardType="number-pad"
-                        placeholder="Input"
-                        value={form.chemDose}
-                        onChangeText={(value) => setForm('chemDose', value)}
-                      />
-                    </View>
-                    <Gap width={20} />
-                    <View style={styles.rightContainer}>
-                      <Gap height={12} />
-                      <Select
-                        value={form.chemDose_unit}
-                        type="Dose"
-                        onSelectChange={(value) =>
-                          setForm('chemDose_unit', value)
-                        }
-                      />
+              form.chemical === 'Tawas' && (
+                <View style={styles.container}>
+                  <View style={styles.containerLabel}>
+                    <Text style={styles.label}>Chem. Dose {form.chemical}</Text>
+                  </View>
+                  <View style={styles.containerInput}>
+                    <View style={styles.containerTimeInput}>
+                      <View style={styles.leftContainer}>
+                        <TextInput
+                          style={styles.timeInput}
+                          keyboardType="number-pad"
+                          placeholder="Input"
+                          value={form.chemDose}
+                          onChangeText={(value) => setForm('chemDose', value)}
+                        />
+                      </View>
+                      <Gap width={20} />
+                      <View style={styles.rightContainer}>
+                        <Gap height={12} />
+                        <Select
+                          value={form.chemDose_unit}
+                          type={setSelectUnit(form.chemical)}
+                          onSelectChange={(value) =>
+                            setForm('chemDose_unit', value)
+                          }
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>
-              </View> :
+              ) :
               <>
-                <View style={styles.container}>
+                {/* <View style={styles.container}>
                   <View style={styles.containerLabel}>
                     <Text style={styles.label}>Chem. Dose Kapur</Text>
                   </View>
@@ -381,7 +393,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                       </View>
                     </View>
                   </View>
-                </View>
+                </View> */}
                 <View style={styles.container}>
                   <View style={styles.containerLabel}>
                     <Text style={styles.label}>Chem. Dose Tawas</Text>
@@ -402,7 +414,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                         <Gap height={12} />
                         <Select
                           value={form.chemDose_unit[1]}
-                          type="Dose"
+                          type={setSelectUnit(form.chemical)}
                           onSelectChange={(value) =>
                             handleMultipleValue('chemDose_unit', 1, value)
                           }
@@ -435,7 +447,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                       <Gap height={12} />
                       <Select
                         value={form.before_unit}
-                        type="Before"
+                        type={setSelectUnit(form.chemical)}
                         enabled={false}
                         onSelectChange={(value) => setForm('before_unit', value)}
                       />
@@ -465,7 +477,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                         <Gap height={12} />
                         <Select
                           value={form.before_unit[0]}
-                          type="Before"
+                          type={setSelectUnit(form.chemical)}
                           enabled={false}
                           onSelectChange={(value) => handleMultipleValue('before_unit', 0, value)}
                         />
@@ -494,7 +506,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                         <Gap height={12} />
                         <Select
                           value={form.before_unit[1]}
-                          type="Before"
+                          type={setSelectUnit(form.chemical)}
                           enabled={false}
                           onSelectChange={(value) => handleMultipleValue('before_unit', 1, value)}
                         />
@@ -525,7 +537,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                       <Gap height={12} />
                       <Select
                         value={form.current_unit}
-                        type="Current"
+                        type={setSelectUnit(form.chemical)}
                         onSelectChange={(value) => setForm('current_unit', value)}
                       />
                     </View>
@@ -553,7 +565,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                         <Gap height={12} />
                         <Select
                           value={form.current_unit[0]}
-                          type="Current"
+                          type={setSelectUnit(form.chemical)}
                           onSelectChange={(value) => handleMultipleValue('current_unit', 0, value)}
                         />
                       </View>
@@ -580,7 +592,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                         <Gap height={12} />
                         <Select
                           value={form.current_unit[1]}
-                          type="Current"
+                          type={setSelectUnit(form.chemical)}
                           onSelectChange={(value) => handleMultipleValue('current_unit', 1, value)}
                         />
                       </View>

@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {HeaderDetail} from '../../components';
+import {Gap, HeaderDetail} from '../../components';
+import storage from '../../utils/storage';
 
 const ProfileCompany = ({navigation}) => {
+  const [wmp, setWmp] = useState([]);
+
+  useEffect(() => {
+    storage
+      .load({
+        key: 'tambang',
+        autoSync: true,
+        syncInBackground: true,
+        syncParams: {
+          someFlag: true,
+        },
+      })
+      .then((ret) => {
+        setWmp(ret.wmp);
+      })
+      .catch((err) => {
+        console.error(err.response);
+      });
+  }, []);
+
   return (
     <View style={styles.page}>
       <HeaderDetail
@@ -31,6 +52,8 @@ const ProfileCompany = ({navigation}) => {
         <View style={styles.list}>
           <Text style={styles.title}>- Punan & Gurimbang </Text>
         </View>
+        <Gap width={12} height={12} />
+        <Text style={styles.title}>Total WMP : {wmp.length}</Text>
       </View>
     </View>
   );

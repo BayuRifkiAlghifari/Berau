@@ -164,6 +164,7 @@ const RekapAttendance = ({navigation}) => {
                   <Text style={styles.labelName}>Nama</Text>
                   <Text style={styles.labelBadge}>Kehadiran</Text>
                   <Text style={styles.labelStatus}>Status</Text>
+                  <Text style={styles.labelWmp}>Jabatan</Text>
                   <Text style={styles.labelWmp}>WMP</Text>
                 </View>
                 {attendance.map((users) => {
@@ -176,6 +177,7 @@ const RekapAttendance = ({navigation}) => {
                         </View>
                       </View>
                       <Text style={styles.valueStatus}>{users.status}</Text>
+                      <Text style={styles.valueWmp}>{users.jabatan}</Text>
                       <Text style={styles.valueWmp}>{users.wmp}</Text>
                     </View>
                   );

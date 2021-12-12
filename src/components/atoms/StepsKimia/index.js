@@ -24,8 +24,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
     time_input: new Date(),
     chemical: 'Kapur',
     purity: '',
-    chemDose: '',
-    chemDose_unit: 'L',
     before: '',
     before_unit: 'L',
     current: '',
@@ -53,10 +51,10 @@ const StepsKimia = ({ wmp, dataWmp }) => {
         },
       })
 
-      console.log('DATA CHEMICAL: ', res.data.chemical);
+      // console.log('DATA CHEMICAL: ', res.data.chemical);
       setDataChemical(res.data.chemical);
     } catch(err) {
-      console.log('Error Chemical: ', err);
+      // console.log('Error Chemical: ', err);
     }
   }, []);
 
@@ -74,8 +72,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
           }
           setForm('reset', '', {
             chemical: form.chemical,
-            chemDose: [],
-            chemDose_unit: ['L', 'L'],
             before: [stock.kapur?.toString() ?? '', stock.tawas?.toString() ?? ''],
             before_unit: ['L', 'L'],
             current: [],
@@ -133,8 +129,7 @@ const StepsKimia = ({ wmp, dataWmp }) => {
   const onNextStep2 = () => {
     if (
       form.before.length > 0 &&
-      form.current.length > 0 &&
-      form.chemDose.length > 0
+      form.current.length > 0
     ) {
       setErrors(false);
     } else {
@@ -157,8 +152,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
     let formNew = form;
     if(formNew.chemical === 'Kapur & Tawas') {
       formNew.purity = formNew.purity.toString();
-      formNew.chemDose = formNew.chemDose.toString();
-      formNew.chemDose_unit = formNew.chemDose_unit.toString();
       formNew.before = formNew.before.toString();
       formNew.before_unit = formNew.before_unit.toString();
       formNew.current = formNew.current.toString();
@@ -332,99 +325,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
           onNext={onNextStep2}
           errors={errors}>
           <View style={styles.content}>
-            {form.chemical !== 'Kapur & Tawas' ?
-              form.chemical === 'Tawas' && (
-                <View style={styles.container}>
-                  <View style={styles.containerLabel}>
-                    <Text style={styles.label}>Chem. Dose {form.chemical}</Text>
-                  </View>
-                  <View style={styles.containerInput}>
-                    <View style={styles.containerTimeInput}>
-                      <View style={styles.leftContainer}>
-                        <TextInput
-                          style={styles.timeInput}
-                          keyboardType="number-pad"
-                          placeholder="Input"
-                          value={form.chemDose}
-                          onChangeText={(value) => setForm('chemDose', value)}
-                        />
-                      </View>
-                      <Gap width={20} />
-                      <View style={styles.rightContainer}>
-                        <Gap height={12} />
-                        <Select
-                          value={form.chemDose_unit}
-                          type={setSelectUnit(form.chemical)}
-                          onSelectChange={(value) =>
-                            setForm('chemDose_unit', value)
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              ) :
-              <>
-                {/* <View style={styles.container}>
-                  <View style={styles.containerLabel}>
-                    <Text style={styles.label}>Chem. Dose Kapur</Text>
-                  </View>
-                  <View style={styles.containerInput}>
-                    <View style={styles.containerTimeInput}>
-                      <View style={styles.leftContainer}>
-                        <TextInput
-                          style={styles.timeInput}
-                          keyboardType="number-pad"
-                          placeholder="Input"
-                          value={form.chemDose[0]}
-                          onChangeText={(value) => handleMultipleValue('chemDose', 0, value)}
-                        />
-                      </View>
-                      <Gap width={20} />
-                      <View style={styles.rightContainer}>
-                        <Gap height={12} />
-                        <Select
-                          value={form.chemDose_unit[0]}
-                          type="Dose"
-                          onSelectChange={(value) =>
-                            handleMultipleValue('chemDose_unit', 0, value)
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View> */}
-                <View style={styles.container}>
-                  <View style={styles.containerLabel}>
-                    <Text style={styles.label}>Chem. Dose Tawas</Text>
-                  </View>
-                  <View style={styles.containerInput}>
-                    <View style={styles.containerTimeInput}>
-                      <View style={styles.leftContainer}>
-                        <TextInput
-                          style={styles.timeInput}
-                          keyboardType="number-pad"
-                          placeholder="Input"
-                          value={form.chemDose[1]}
-                          onChangeText={(value) => handleMultipleValue('chemDose', 1, value)}
-                        />
-                      </View>
-                      <Gap width={20} />
-                      <View style={styles.rightContainer}>
-                        <Gap height={12} />
-                        <Select
-                          value={form.chemDose_unit[1]}
-                          type={setSelectUnit(form.chemical)}
-                          onSelectChange={(value) =>
-                            handleMultipleValue('chemDose_unit', 1, value)
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </>
-            }
             {form.chemical !== 'Kapur & Tawas' ?
               <View style={styles.container}>
                 <View style={styles.containerLabel}>
@@ -643,12 +543,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                     <Text style={styles.value}>{form.purity}</Text>
                   </View>
                   <View style={styles.summary}>
-                    <Text style={styles.labelSummary}>Chem. Dose {form.chemical}</Text>
-                    <Text style={styles.value}>
-                      {form.chemDose} {form.chemDose_unit}
-                    </Text>
-                  </View>
-                  <View style={styles.summary}>
                     <Text style={styles.labelSummary}>Stock {form.chemical} Shift Sblm</Text>
                     <Text style={styles.value}>
                       {form.before} {form.before_unit}
@@ -669,18 +563,6 @@ const StepsKimia = ({ wmp, dataWmp }) => {
                   <View style={styles.summary}>
                     <Text style={styles.labelSummary}>% Purity Tawas</Text>
                     <Text style={styles.value}>{form.purity[1]}</Text>
-                  </View>
-                  <View style={styles.summary}>
-                    <Text style={styles.labelSummary}>Chem. Dose Kapur</Text>
-                    <Text style={styles.value}>
-                      {form.chemDose[0]} {form.chemDose_unit[0]}
-                    </Text>
-                  </View>
-                  <View style={styles.summary}>
-                    <Text style={styles.labelSummary}>Chem. Dose Tawas</Text>
-                    <Text style={styles.value}>
-                      {form.chemDose[1]} {form.chemDose_unit[1]}
-                    </Text>
                   </View>
                   <View style={styles.summary}>
                     <Text style={styles.labelSummary}>Stock Kapur Shift Sblm</Text>

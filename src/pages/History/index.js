@@ -30,6 +30,7 @@ const History = ({navigation}) => {
           },
         }).then((res) => {
           setData(res.data.data);
+          // console.log('RES: ', res.data);
         });
       })
       .catch((err) => {
@@ -55,8 +56,9 @@ const History = ({navigation}) => {
             <Gap height={11} />
             {data.map((item) => {
               const date = Moment(item.created_at).format('DD MMMM YYYY');
-              const time = Moment(item.created_at).format('H:mm');
-
+              const timeSplit = item.time_input.toString().split(':');
+              const time = `${timeSplit[0]}:${timeSplit[1]}`;
+              // console.log('TIME SPLIT: ', timeSplit);
               return (
                 <ListWMP
                   key={item.id}

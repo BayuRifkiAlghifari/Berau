@@ -204,21 +204,11 @@ const Select = ({value, onSelectChange, type, enabled, item}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="Operator" value="Operator" />
-            <Picker.Item
-              label="Pengambil Contoh Uji (PPC)"
-              value="Pengambil Contoh Uji (PPC)"
-            />
-            <Picker.Item
-              label="Teknisi/Maintenance"
-              value="Teknisi/Maintenance"
-            />
-            <Picker.Item label="Pengawas Lapangan" value="Pengawas Lapangan" />
-            <Picker.Item label="QA/QC" value="QA/QC" />
-            <Picker.Item
-              label="Highest Administrator"
-              value="Highest Administrator"
-            />
+            {item.length > 1 && 
+              item?.map((item, index) => (
+                <Picker.Item key={index.toString()} label={item.nama} value={item.id} />
+              ))
+            }
           </Picker>
         </View>
       )}

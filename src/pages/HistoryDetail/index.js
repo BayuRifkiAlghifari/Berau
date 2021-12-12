@@ -11,9 +11,10 @@ import {Gap, HeaderDetail} from '../../components';
 
 const HistoryDetail = ({navigation, route}) => {
   const data = route.params;
+  const timeSplit = data.time_input.toString().split(':');
   const date = new Date(data.tanggal_input).toDateString();
-  const hour = new Date(data.kimia.waktu_input).getHours();
-  const minute = new Date(data.kimia.waktu_input).getMinutes();
+  const hour = timeSplit[0];
+  const minute = timeSplit[1];
   const time = hour + ':' + minute;
 
   return (
@@ -89,7 +90,7 @@ const HistoryDetail = ({navigation, route}) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Periodical Input</Text>
-            <Text style={styles.value}>{data.kimia.periode_input}</Text>
+            <Text style={styles.value}>{data?.kimia?.periode_input}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Time Input</Text>
@@ -97,22 +98,22 @@ const HistoryDetail = ({navigation, route}) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Chemicals</Text>
-            <Text style={styles.value}>{data.kimia.chemical}</Text>
+            <Text style={styles.value}>{data?.kimia?.chemical}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>% Kemurnian</Text>
-            <Text style={styles.value}>{data.kimia.purity}</Text>
+            <Text style={styles.value}>{data?.kimia?.purity}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Stock Shift Sblm</Text>
             <Text style={styles.value}>
-              {data.kimia.before} {data.kimia.before_unit}
+              {data?.kimia?.before} {data?.kimia?.before_unit}
             </Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Stock Berjalan</Text>
             <Text style={styles.value}>
-              {data.kimia.current} {data.kimia.current_unit}
+              {data?.kimia?.current} {data?.kimia?.current_unit}
             </Text>
           </View>
         </View>
@@ -125,7 +126,7 @@ const HistoryDetail = ({navigation, route}) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Periodical Input</Text>
-            <Text style={styles.value}>{data.kimia.periode_input}</Text>
+            <Text style={styles.value}>{data?.kimia?.periode_input}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Time Input</Text>
@@ -133,14 +134,14 @@ const HistoryDetail = ({navigation, route}) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.label}>Jenis Perbaikan</Text>
-            <Text style={styles.value}>{data.perbaikan.jenis_perbaikan}</Text>
+            <Text style={styles.value}>{data?.perbaikan?.jenis_perbaikan}</Text>
           </View>
         </View>
         <Gap height={20} />
         <View style={styles.card}>
           <View style={styles.content}>
             <Text style={styles.label}>Kegiatan Perbaikan</Text>
-            <Text style={styles.value}>{data.perbaikan.keterangan}</Text>
+            <Text style={styles.value}>{data?.perbaikan?.keterangan}</Text>
           </View>
         </View>
         <Gap height={20} />

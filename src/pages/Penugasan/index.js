@@ -99,8 +99,8 @@ const Penugasan = ({navigation}) => {
               <Marker
                 key={index}
                 coordinate={{
-                  latitude: Number(data.lat),
-                  longitude: Number(data.long),
+                  latitude: Number(data.lat) || 0,
+                  longitude: Number(data.long) || 0,
                 }}>
                 <Callout>
                   <Text>{data.nama}</Text>

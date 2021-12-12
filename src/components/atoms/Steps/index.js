@@ -26,20 +26,29 @@ const Steps = ({ wmp, dataWmp }) => {
     sampling_point: 'Sebelum titik Pengapuran',
     weather_condition: 'Cerah',
     PH: '',
+    PH_inlet: '',
     TSS: '',
     TSS_unit: 'mg/L',
+    TSS_inlet: '',
+    TSS_inlet_unit: 'mg/L',
     Fe: '-',
     Fe_unit: 'mg/L',
     Mn: '-',
     Mn_unit: 'mg/L',
     Debit: '',
     Debit_unit: 'm3/hari',
+    Debit_inlet: '',
+    Debit_inlet_unit: 'm3/hari',
   });
   const [errors, setErrors] = useState(false);
 
   useEffect(() => {
     setForm('wmp', wmp);
   }, [wmp]);
+
+  useEffect(() => {
+    console.log('TIME: ', form.time_input);
+  }, [form.time_input]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
@@ -58,10 +67,13 @@ const Steps = ({ wmp, dataWmp }) => {
   const onNextStep = () => {
     if (
       form.PH.length > 0 &&
+      form.PH_inlet.length > 0 &&
       form.TSS.length > 0 &&
+      form.TSS_inlet.length > 0 &&
       form.Fe.length > 0 &&
       form.Mn.length > 0 &&
-      form.Debit.length > 0
+      form.Debit.length > 0 &&
+      form.Debit_inlet.length > 0
     ) {
       setErrors(false);
     } else {
@@ -223,6 +235,23 @@ const Steps = ({ wmp, dataWmp }) => {
             <Gap height={10} />
             <View style={styles.container}>
               <View style={styles.containerLabel}>
+                <Text style={styles.label}>pH inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={[styles.containerTimeInput, {paddingRight: normalize(16)}]}>
+                  <TextInput
+                    style={[styles.timeInput, { flex: 1 }]}
+                    keyboardType="number-pad"
+                    placeholder="Input"
+                    value={form.PH_inlet}
+                    onChangeText={(value) => setForm('PH_inlet', value)}
+                  />
+                </View>
+              </View>
+            </View>
+            <Gap height={10} />
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
                 <Text style={styles.label}>TSS</Text>
               </View>
               <View style={styles.containerInput}>
@@ -243,6 +272,33 @@ const Steps = ({ wmp, dataWmp }) => {
                       value={form.TSS_unit}
                       type="TSS"
                       onSelectChange={(value) => setForm('TSS_unit', value)}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
+                <Text style={styles.label}>TSS inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={styles.containerTimeInput}>
+                  <View style={styles.leftContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      keyboardType="number-pad"
+                      placeholder="Input"
+                      value={form.TSS_inlet}
+                      onChangeText={(value) => setForm('TSS_inlet', value)}
+                    />
+                  </View>
+                  <Gap width={20} />
+                  <View style={styles.rightContainer}>
+                    <Gap height={10} />
+                    <Select
+                      value={form.TSS_inlet_unit}
+                      type="TSS"
+                      onSelectChange={(value) => setForm('TSS_inlet_unit', value)}
                     />
                   </View>
                 </View>
@@ -329,6 +385,33 @@ const Steps = ({ wmp, dataWmp }) => {
                 </View>
               </View>
             </View>
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
+                <Text style={styles.label}>Debit inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={styles.containerTimeInput}>
+                  <View style={styles.leftContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      keyboardType="number-pad"
+                      placeholder="Input"
+                      value={form.Debit_inlet}
+                      onChangeText={(value) => setForm('Debit_inlet', value)}
+                    />
+                  </View>
+                  <Gap width={20} />
+                  <View style={styles.rightContainer}>
+                    <Gap height={10} />
+                    <Select
+                      value={form.Debit_inlet_unit}
+                      type="Debit"
+                      onSelectChange={(value) => setForm('Debit_inlet_unit', value)}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
           </View>
         </ProgressStep>
         <ProgressStep
@@ -373,9 +456,19 @@ const Steps = ({ wmp, dataWmp }) => {
                 <Text style={styles.value}>{form.PH}</Text>
               </View>
               <View style={styles.summary}>
+                <Text style={styles.labelSummary}>pH inlet</Text>
+                <Text style={styles.value}>{form.PH_inlet}</Text>
+              </View>
+              <View style={styles.summary}>
                 <Text style={styles.labelSummary}>TSS</Text>
                 <Text style={styles.value}>
                   {form.TSS} {form.TSS_unit}
+                </Text>
+              </View>
+              <View style={styles.summary}>
+                <Text style={styles.labelSummary}>TSS inlet</Text>
+                <Text style={styles.value}>
+                  {form.TSS_inlet} {form.TSS_inlet_unit}
                 </Text>
               </View>
               <View style={styles.summary}>
@@ -394,6 +487,12 @@ const Steps = ({ wmp, dataWmp }) => {
                 <Text style={styles.labelSummary}>Debit</Text>
                 <Text style={styles.value}>
                   {form.Debit} {form.Debit_unit}
+                </Text>
+              </View>
+              <View style={styles.summary}>
+                <Text style={styles.labelSummary}>Debit inlet</Text>
+                <Text style={styles.value}>
+                  {form.Debit_inlet} {form.Debit_inlet_unit}
                 </Text>
               </View>
             </View>

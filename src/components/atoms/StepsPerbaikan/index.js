@@ -28,7 +28,6 @@ const StepsPerbaikan = ({ wmp, dataWmp }) => {
   });
 
   useEffect(() => {
-    console.log('WMP: ', wmp);
     setForm('wmp', wmp);
   }, [wmp]);
 

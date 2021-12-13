@@ -37,7 +37,6 @@ const InputData = ({navigation}) => {
         },
       })
       .then((res) => {
-        console.log('RES WMP: ', res.wmp);
         setPenugasan(setPenugasanValue(res.nama));
         setWmp(res.wmp[0].id);
         setDataWmp(res.wmp);

@@ -20,7 +20,5 @@ export const setPenugasanValue = (value) => {
 }
 
 export const findWmpDetail = (id, wmp) => {
-  console.log('ID WMP: ', id);
-  console.log('DATA WMP: ', wmp);
   return wmp.find(key => key.id === id);
 }

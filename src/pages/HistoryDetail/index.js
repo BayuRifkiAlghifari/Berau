@@ -51,9 +51,19 @@ const HistoryDetail = ({navigation, route}) => {
             <Text style={styles.value}>{data.ph}</Text>
           </View>
           <View style={styles.content}>
+            <Text style={styles.label}>pH inlet</Text>
+            <Text style={styles.value}>{data.ph_inlet}</Text>
+          </View>
+          <View style={styles.content}>
             <Text style={styles.label}>TSS</Text>
             <Text style={styles.value}>
               {data.tts} {data.tts_unit}
+            </Text>
+          </View>
+          <View style={styles.content}>
+            <Text style={styles.label}>TSS inlet</Text>
+            <Text style={styles.value}>
+              {data.tss_inlet} {data.tts_unit}
             </Text>
           </View>
           <View style={styles.content}>
@@ -75,9 +85,9 @@ const HistoryDetail = ({navigation, route}) => {
             </Text>
           </View>
           <View style={styles.content}>
-            <Text style={styles.label}>Chem. Dose</Text>
+            <Text style={styles.label}>Debit inlet</Text>
             <Text style={styles.value}>
-              {data.chem_dose} {data.chem_dose_unit}
+              {data.debit_inlet} {data.debit_unit}
             </Text>
           </View>
         </View>

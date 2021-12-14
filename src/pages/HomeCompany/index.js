@@ -25,7 +25,7 @@ import storage from '../../utils/storage';
 const HomeCompany = ({navigation}) => {
   const [penugasan, setPenugasan] = useState('');
   const [data, setData] = useState([]);
-  const [tableHead] = useState(['Bulan', 'Total Kapur', 'Total Tawas']);
+  const [tableHead] = useState(['Bulan', 'Total Kapur', 'Total Tawas', 'Total Liquid']);
   const [widthArr, setWidthArr] = useState([110, 110, 110]);
   const [summary, setSummary] = useState({
     wmp: 0,

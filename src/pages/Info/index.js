@@ -27,7 +27,6 @@ const Info = ({navigation}) => {
               Authorization: `Bearer ${ret}`,
             },
           }).then((res) => {
-            console.log('DATA NOTIF: ', res.data.notif.data);
             setData(res.data.notif.data);
           });
         });

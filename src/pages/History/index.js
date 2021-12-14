@@ -40,7 +40,7 @@ const History = ({navigation}) => {
   return (
     <View style={styles.page}>
       <HeaderDetail
-        onPress={() => navigation.navigate('Penugasan')}
+        onPress={() => navigation.goBack()}
         company="PT. Berau Coal"
       />
       {data.length < 0 ? (
@@ -54,22 +54,23 @@ const History = ({navigation}) => {
           <Text style={styles.label}>Pilih WMP</Text>
           <ScrollView>
             <Gap height={11} />
-            {data.map((item) => {
-              const date = Moment(item.created_at).format('DD MMMM YYYY');
-              const timeSplit = item.time_input.toString().split(':');
-              const time = `${timeSplit[0]}:${timeSplit[1]}`;
-              // console.log('TIME SPLIT: ', timeSplit);
-              return (
-                <ListWMP
-                  key={item.id}
-                  wmp={item.wmp.nama}
-                  status={item.status}
-                  date={date}
-                  time={time}
-                  onPress={() => navigation.navigate('HistoryDetail', item)}
-                />
-              );
-            })}
+            {data.length > 1 ?
+              data.map((item) => {
+                const date = Moment(item.created_at).format('DD MMMM YYYY');
+                const timeSplit = item.time_input.toString().split(':');
+                const time = `${timeSplit[0]}:${timeSplit[1]}`;
+                return (
+                  <ListWMP
+                    key={item.id}
+                    wmp={item.wmp.nama}
+                    status={item.status}
+                    date={date}
+                    time={time}
+                    onPress={() => navigation.navigate('HistoryDetail', item)}
+                  />
+                );
+              }) : <Text style={[styles.label, { textAlign: 'center' }]}>No data available</Text>
+            }
           </ScrollView>
         </View>
       )}

@@ -13,6 +13,7 @@ import {
   Company,
   IcBack,
   IcBackHome,
+  IcHistory,
   IcLaporan,
   IcPenugasan,
   IcPersonalData,
@@ -24,31 +25,36 @@ import storage from '../../utils/storage';
 const HomeCompany = ({navigation}) => {
   const [penugasan, setPenugasan] = useState('');
   const [data, setData] = useState([]);
-  const [tableHead] = useState(['Bulan', 'Total Kapur', 'Total Tawas']);
+  const [tableHead] = useState(['Bulan', 'Total Kapur', 'Total Tawas', 'Total Liquid']);
   const [widthArr, setWidthArr] = useState([110, 110, 110]);
+  const [summary, setSummary] = useState({
+    wmp: 0,
+    material: 0,
+    inspeksi: 0,
+  });
   const tableData = data;
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     storage
-      .load({
-        key: 'tambang',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((res) => {
-        setPenugasan(res.nama);
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
-    storage
+    .load({
+      key: 'tambang',
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        someFlag: true,
+      },
+    })
+    .then((res) => {
+      setPenugasan(res.nama);
+    })
+    .catch((err) => {
+      console.error(err.response);
+    });
+    const ret = await storage
       .load({
         key: 'token',
         autoSync: true,
@@ -57,24 +63,33 @@ const HomeCompany = ({navigation}) => {
           someFlag: true,
         },
       })
-      .then((ret) => {
-        Axios.get(`${API_HOST.url}/report/rekaptulasi`, {
-          headers: {
-            Authorization: `Bearer ${ret}`,
-          },
-        })
-          .then((res) => {
-            setData(res.data.data_rows);
-            setWidthArr(res.data.data_width);
-          })
-          .catch((err) => {
-            console.error(err.response);
-          });
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
+    const res = await Axios.get(`${API_HOST.url}/report/rekaptulasi`, {
+      headers: {
+        Authorization: `Bearer ${ret}`,
+      },
+    });
+    setData(res.data.data_rows);
+    setWidthArr(res.data.data_width);
+
+    const wmp = await getPerformanceSummary('lewat-baku-mutu', ret);
+    const material = await getPerformanceSummary('pemakaian-material', ret);
+    const inspeksi = await getPerformanceSummary('perbaikan-open', ret);
+    
+    setSummary({
+      wmp: wmp.data.count,
+      material: material.data.count,
+      inspeksi: inspeksi.data.count,
+    })
   }, []);
+
+  const getPerformanceSummary = (type, token) => {
+    return Axios.get(`${API_HOST.url}/info/${type}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  }
+
   return (
     <View style={styles.page}>
       <ScrollView>
@@ -125,9 +140,9 @@ const HomeCompany = ({navigation}) => {
           <TouchableOpacity
             activeOpacity={0.7}
             style={styles.menu}
-            onPress={() => navigation.navigate('SyncData')}>
-            <IcSinkron />
-            <Text style={styles.menuText}>Sinkron Data</Text>
+            onPress={() => navigation.navigate('History')}>
+            <IcHistory />
+            <Text style={styles.menuText}>History</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
@@ -170,21 +185,17 @@ const HomeCompany = ({navigation}) => {
           <Gap height={5} />
           <View style={styles.footer}>
             <View style={styles.footerCard}>
-              <Text style={styles.footerText}>Golden Rules</Text>
-              <Text style={styles.footerCount}>0</Text>
+              <Text style={styles.footerText}>WMP Lewat Baku Mutu</Text>
+              <Text style={styles.footerCount}>{summary.wmp}</Text>
             </View>
             <View style={styles.footerCard}>
-              <Text style={styles.footerText}>Major</Text>
-              <Text style={styles.footerText}>Injury</Text>
-              <Text style={styles.footerCount}>0</Text>
+              <Text style={styles.footerText}>Pemakaian Material</Text>
+              <Text style={styles.footerCount}>{summary.material}</Text>
             </View>
             <View style={styles.footerCard}>
-              <Text style={styles.footerText}>Fatality Incident</Text>
-              <Text style={styles.footerCount}>0</Text>
-            </View>
-            <View style={styles.footerCard}>
-              <Text style={styles.footerText}>Fatal Enviro Incident</Text>
-              <Text style={styles.footerCount}>0</Text>
+              <Text style={styles.footerText}>Total Inspeksi</Text>
+              <Text style={styles.footerText}>Open</Text>
+              <Text style={styles.footerCount}>{summary.inspeksi}</Text>
             </View>
           </View>
         </View>
@@ -300,7 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: normalize(20),
   },
   footer: {
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     flexDirection: 'row',
   },
   footerCard: {
@@ -322,5 +333,6 @@ const styles = StyleSheet.create({
     fontSize: normalize(14),
     color: '#FFFFFF',
     textAlign: 'center',
+    marginTop: 8
   },
 });

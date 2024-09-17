@@ -8,41 +8,50 @@ import storage from '../../utils/storage';
 const Info = ({navigation}) => {
   const [data, setData] = useState([]);
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
   useEffect(() => {
-    storage
-      .load({
-        key: 'token',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((ret) => {
-        Axios.get(`${API_HOST.url}/notifikasi`, {
-          headers: {
-            Authorization: `Bearer ${ret}`,
+    navigation.addListener('focus', () => {
+      storage
+        .load({
+          key: 'token',
+          autoSync: true,
+          syncInBackground: true,
+          syncParams: {
+            someFlag: true,
           },
-        }).then((res) => {
-          setData(res.data.notif);
+        })
+        .then((ret) => {
+          Axios.get(`${API_HOST.url}/notifikasi`, {
+            headers: {
+              Authorization: `Bearer ${ret}`,
+            },
+          }).then((res) => {
+            setData(res.data.notif.data);
+          });
         });
-      });
+    })
   }, []);
+
+  const directDetailNotif = (item) => {
+    if(item.notif_type.toLowerCase() === 'perbaikan') {
+      navigation.navigate('InfoDetail', { id: item.id });
+    }
+  }
+
   return (
     <View style={styles.page}>
       <Header />
       <View style={styles.container}>
         <View style={styles.card}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {data.map((item, index) => {
+            {data?.map((item, index) => {
               return (
                 <InfoList
                   key={index}
-                  text={item.keterangan}
+                  text={item.notif_title}
                   active
-                  onPress={() => navigation.navigate('InfoDetail', item)}
+                  onPress={() => directDetailNotif(item)}
                 />
               );
             })}

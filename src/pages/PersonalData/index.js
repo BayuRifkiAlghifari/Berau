@@ -61,18 +61,20 @@ const PersonalData = ({navigation}) => {
   const [token, setToken] = useState('');
   const [pegawai, setPegawai] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [jabatan, setJabatan] = useState([]);
   const [data, setData] = useState();
 
   const [form, setForm] = useForm({
     status: 'Dedicated',
     wmp: '1',
+    id_jabatan: '',
     statusAttendance: 'Hadir'
   });
 
   const currentDate = Moment(new Date()).format('YYYY-MM-DD');
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   useEffect(() => {
@@ -97,6 +99,7 @@ const PersonalData = ({navigation}) => {
     if(token) {
       getDataAttendance();
       getDataEmployee();
+      getDataJobTitle();
     }
   }, [token]);
 
@@ -119,6 +122,16 @@ const PersonalData = ({navigation}) => {
     });
     setAttendance(response.data.data);
   };
+
+  const getDataJobTitle = async () => {
+    const response = await Axios.get(`${API_HOST.url}/jabatan`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log('JABATAN: ', response.data);
+    setJabatan(response.data.data);
+  }
 
   const onDelete = (item) => {
     Axios.delete(`${API_HOST.url}/pegawai/delete/${item.id}`, {
@@ -177,6 +190,7 @@ const PersonalData = ({navigation}) => {
                   <Text style={styles.labelName}>Nama</Text>
                   <Text style={styles.labelBadge}>Kehadiran</Text>
                   <Text style={styles.labelStatus}>Status</Text>
+                  <Text style={styles.labelWmp}>Jabatan</Text>
                   <Text style={styles.labelWmp}>WMP</Text>
                   <Text style={styles.labelWmp}>Tanggal</Text>
                 </View>
@@ -190,8 +204,9 @@ const PersonalData = ({navigation}) => {
                         </View>
                       </View>
                       <Text style={styles.valueStatus}>{res.status}</Text>
+                      <Text style={styles.valueWmp}>{res.jabatan}</Text>
                       <Text style={styles.valueWmp}>{res.wmp}</Text>
-                      <Text style={styles.valueWmp}>-</Text>
+                      <Text style={styles.valueWmp}>{Moment(new Date()).format('DD-MM-YYYY')}</Text>
                     </View>
                   );
                 })}
@@ -279,6 +294,15 @@ const PersonalData = ({navigation}) => {
                   value={form.wmp}
                   type="WMP"
                   onSelectChange={(value) => setForm('wmp', value)}
+                />
+              </View>
+              <View style={styles.input}>
+                <Text style={styles.labelForm}>Jabatan: </Text>
+                <Select
+                  value={form.id_jabatan}
+                  item={jabatan}
+                  type="Jabatan"
+                  onSelectChange={(value) => setForm('id_jabatan', value)}
                 />
               </View>
               <View style={styles.input}>

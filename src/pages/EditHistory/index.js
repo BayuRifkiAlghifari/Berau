@@ -16,16 +16,18 @@ import storage from '../../utils/storage';
 const EditHistory = ({navigation, route}) => {
   const data = route.params;
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   const [form, setForm] = useForm({
     PH: data.ph.toString(),
+    PH_inlet: data.ph_inlet.toString(),
     TSS: data.tts.toString(),
+    TSS_inlet: data.tss_inlet.toString(),
     Fe: data.fe.toString(),
     Mn: data.mn.toString(),
     Debit: data.debit.toString(),
-    ChemDose: data.chem_dose.toString(),
+    Debit_inlet: data.debit_inlet.toString(),
   });
 
   const onSubmit = () => {
@@ -68,11 +70,23 @@ const EditHistory = ({navigation, route}) => {
               value={form.PH}
               onChangeText={(value) => setForm('PH', value)}
             />
+            <Text style={styles.label}>pH inlet</Text>
+            <TextInput
+              style={styles.input}
+              value={form.PH_inlet}
+              onChangeText={(value) => setForm('PH_inlet', value)}
+            />
             <Text style={styles.label}>TSS</Text>
             <TextInput
               style={styles.input}
               value={form.TSS}
               onChangeText={(value) => setForm('TSS', value)}
+            />
+            <Text style={styles.label}>TSS inlet</Text>
+            <TextInput
+              style={styles.input}
+              value={form.TSS_inlet}
+              onChangeText={(value) => setForm('TSS_inlet', value)}
             />
             <Text style={styles.label}>Fe</Text>
             <TextInput
@@ -92,11 +106,11 @@ const EditHistory = ({navigation, route}) => {
               value={form.Debit}
               onChangeText={(value) => setForm('Debit', value)}
             />
-            <Text style={styles.label}>Chem. Dose</Text>
+            <Text style={styles.label}>Debit inlet</Text>
             <TextInput
               style={styles.input}
-              value={form.ChemDose}
-              onChangeText={(value) => setForm('ChemDose', value)}
+              value={form.Debit_inlet}
+              onChangeText={(value) => setForm('Debit_inlet', value)}
             />
           </View>
           <Gap height={20} />

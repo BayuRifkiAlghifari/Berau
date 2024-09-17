@@ -12,7 +12,7 @@ const initAttState = {
   Mn: '',
   Mn_unit: 'mg/L',
   Debit: '',
-  Debit_unit: 'm3/detik',
+  Debit_unit: 'm3/hari',
   ChemDose: '',
   ChemDose_unit: 'mg/L',
 };

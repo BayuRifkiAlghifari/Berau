@@ -11,7 +11,7 @@ import LottieView from 'lottie-react-native';
 const History = ({navigation}) => {
   const [data, setData] = useState([]);
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
   useEffect(() => {
     storage
@@ -30,6 +30,7 @@ const History = ({navigation}) => {
           },
         }).then((res) => {
           setData(res.data.data);
+          // console.log('RES: ', res.data);
         });
       })
       .catch((err) => {
@@ -39,7 +40,7 @@ const History = ({navigation}) => {
   return (
     <View style={styles.page}>
       <HeaderDetail
-        onPress={() => navigation.navigate('Penugasan')}
+        onPress={() => navigation.goBack()}
         company="PT. Berau Coal"
       />
       {data.length < 0 ? (
@@ -53,21 +54,23 @@ const History = ({navigation}) => {
           <Text style={styles.label}>Pilih WMP</Text>
           <ScrollView>
             <Gap height={11} />
-            {data.map((item) => {
-              const date = Moment(item.created_at).format('DD MMMM YYYY');
-              const time = Moment(item.created_at).format('H:mm');
-
-              return (
-                <ListWMP
-                  key={item.id}
-                  wmp={item.wmp.nama}
-                  status={item.status}
-                  date={date}
-                  time={time}
-                  onPress={() => navigation.navigate('HistoryDetail', item)}
-                />
-              );
-            })}
+            {data.length > 1 ?
+              data.map((item) => {
+                const date = Moment(item.created_at).format('DD MMMM YYYY');
+                const timeSplit = item.time_input.toString().split(':');
+                const time = `${timeSplit[0]}:${timeSplit[1]}`;
+                return (
+                  <ListWMP
+                    key={item.id}
+                    wmp={item.wmp.nama}
+                    status={item.status}
+                    date={date}
+                    time={time}
+                    onPress={() => navigation.navigate('HistoryDetail', item)}
+                  />
+                );
+              }) : <Text style={[styles.label, { textAlign: 'center' }]}>No data available</Text>
+            }
           </ScrollView>
         </View>
       )}

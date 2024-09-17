@@ -12,48 +12,43 @@ import {
 import normalize from 'react-native-normalize';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {Gap, Select} from '../../../components';
-import {showMessage, useForm} from '../../../utils';
+import {findWmpDetail, showMessage, useForm} from '../../../utils';
 import storage from '../../../utils/storage';
 
-const Steps = () => {
+const Steps = ({ wmp, dataWmp }) => {
   // Initial State
   const [form, setForm] = useForm({
     type: 'aat',
-    wmp: '1',
+    wmp: wmp,
     date_input: new Date(),
-    periodical_input: 'Per Jam',
+    periodical_input: 'Shift-1',
     time_input: new Date(),
     sampling_point: 'Sebelum titik Pengapuran',
     weather_condition: 'Cerah',
     PH: '',
+    PH_inlet: '',
     TSS: '',
     TSS_unit: 'mg/L',
+    TSS_inlet: '',
+    TSS_inlet_unit: 'mg/L',
     Fe: '-',
     Fe_unit: 'mg/L',
     Mn: '-',
     Mn_unit: 'mg/L',
     Debit: '',
-    Debit_unit: 'm3/detik',
+    Debit_unit: 'm3/hari',
+    Debit_inlet: '',
+    Debit_inlet_unit: 'm3/hari',
   });
   const [errors, setErrors] = useState(false);
 
   useEffect(() => {
-    storage
-      .load({
-        key: 'wmp',
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          someFlag: true,
-        },
-      })
-      .then((ret) => {
-        setForm('wmp', ret);
-      })
-      .catch((err) => {
-        console.error(err.response);
-      });
-  }, []);
+    setForm('wmp', wmp);
+  }, [wmp]);
+
+  useEffect(() => {
+    console.log('TIME: ', form.time_input);
+  }, [form.time_input]);
 
   const [show, setShow] = useState(false);
   const [showTime, setShowTime] = useState(false);
@@ -72,10 +67,13 @@ const Steps = () => {
   const onNextStep = () => {
     if (
       form.PH.length > 0 &&
+      form.PH_inlet.length > 0 &&
       form.TSS.length > 0 &&
+      form.TSS_inlet.length > 0 &&
       form.Fe.length > 0 &&
       form.Mn.length > 0 &&
-      form.Debit.length > 0
+      form.Debit.length > 0 &&
+      form.Debit_inlet.length > 0
     ) {
       setErrors(false);
     } else {
@@ -237,6 +235,23 @@ const Steps = () => {
             <Gap height={10} />
             <View style={styles.container}>
               <View style={styles.containerLabel}>
+                <Text style={styles.label}>pH inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={[styles.containerTimeInput, {paddingRight: normalize(16)}]}>
+                  <TextInput
+                    style={[styles.timeInput, { flex: 1 }]}
+                    keyboardType="number-pad"
+                    placeholder="Input"
+                    value={form.PH_inlet}
+                    onChangeText={(value) => setForm('PH_inlet', value)}
+                  />
+                </View>
+              </View>
+            </View>
+            <Gap height={10} />
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
                 <Text style={styles.label}>TSS</Text>
               </View>
               <View style={styles.containerInput}>
@@ -252,11 +267,38 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.TSS_unit}
                       type="TSS"
                       onSelectChange={(value) => setForm('TSS_unit', value)}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
+                <Text style={styles.label}>TSS inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={styles.containerTimeInput}>
+                  <View style={styles.leftContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      keyboardType="number-pad"
+                      placeholder="Input"
+                      value={form.TSS_inlet}
+                      onChangeText={(value) => setForm('TSS_inlet', value)}
+                    />
+                  </View>
+                  <Gap width={20} />
+                  <View style={styles.rightContainer}>
+                    <Gap height={10} />
+                    <Select
+                      value={form.TSS_inlet_unit}
+                      type="TSS"
+                      onSelectChange={(value) => setForm('TSS_inlet_unit', value)}
                     />
                   </View>
                 </View>
@@ -279,7 +321,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Fe_unit}
                       type="Fe"
@@ -306,7 +348,7 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Mn_unit}
                       type="Mn"
@@ -333,11 +375,38 @@ const Steps = () => {
                   </View>
                   <Gap width={20} />
                   <View style={styles.rightContainer}>
-                    <Gap height={12} />
+                    <Gap height={10} />
                     <Select
                       value={form.Debit_unit}
                       type="Debit"
                       onSelectChange={(value) => setForm('Debit_unit', value)}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.containerLabel}>
+                <Text style={styles.label}>Debit inlet</Text>
+              </View>
+              <View style={styles.containerInput}>
+                <View style={styles.containerTimeInput}>
+                  <View style={styles.leftContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      keyboardType="number-pad"
+                      placeholder="Input"
+                      value={form.Debit_inlet}
+                      onChangeText={(value) => setForm('Debit_inlet', value)}
+                    />
+                  </View>
+                  <Gap width={20} />
+                  <View style={styles.rightContainer}>
+                    <Gap height={10} />
+                    <Select
+                      value={form.Debit_inlet_unit}
+                      type="Debit"
+                      onSelectChange={(value) => setForm('Debit_inlet_unit', value)}
                     />
                   </View>
                 </View>
@@ -356,7 +425,7 @@ const Steps = () => {
             <View style={styles.card}>
               <View style={styles.summary}>
                 <Text style={styles.labelSummary}>WMP</Text>
-                <Text style={styles.value}>{form.wmp}</Text>
+                <Text style={styles.value}>{findWmpDetail(form.wmp, dataWmp)?.nama}</Text>
               </View>
               <View style={styles.summary}>
                 <Text style={styles.labelSummary}>Date Input</Text>
@@ -387,9 +456,19 @@ const Steps = () => {
                 <Text style={styles.value}>{form.PH}</Text>
               </View>
               <View style={styles.summary}>
+                <Text style={styles.labelSummary}>pH inlet</Text>
+                <Text style={styles.value}>{form.PH_inlet}</Text>
+              </View>
+              <View style={styles.summary}>
                 <Text style={styles.labelSummary}>TSS</Text>
                 <Text style={styles.value}>
                   {form.TSS} {form.TSS_unit}
+                </Text>
+              </View>
+              <View style={styles.summary}>
+                <Text style={styles.labelSummary}>TSS inlet</Text>
+                <Text style={styles.value}>
+                  {form.TSS_inlet} {form.TSS_inlet_unit}
                 </Text>
               </View>
               <View style={styles.summary}>
@@ -408,6 +487,12 @@ const Steps = () => {
                 <Text style={styles.labelSummary}>Debit</Text>
                 <Text style={styles.value}>
                   {form.Debit} {form.Debit_unit}
+                </Text>
+              </View>
+              <View style={styles.summary}>
+                <Text style={styles.labelSummary}>Debit inlet</Text>
+                <Text style={styles.value}>
+                  {form.Debit_inlet} {form.Debit_inlet_unit}
                 </Text>
               </View>
             </View>
@@ -497,10 +582,10 @@ const styles = StyleSheet.create({
     marginLeft: normalize(12),
   },
   leftContainer: {
-    flex: 1,
+    flex: 3,
   },
   rightContainer: {
-    flex: 1,
+    flex: 4,
   },
   timeInput: {
     borderWidth: 1,
@@ -510,6 +595,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     textAlign: 'center',
     height: normalize(40),
+    fontWeight: 'bold',
   },
   card: {
     width: '90%',

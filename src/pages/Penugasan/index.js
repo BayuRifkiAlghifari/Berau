@@ -7,8 +7,10 @@ import {
   IcInputData,
   IcPersonalData,
   IcRekapData,
+  IcSinkron,
 } from '../../assets';
 import {Gap, HeaderDetail, Select} from '../../components';
+import { setPenugasanValue } from '../../utils';
 import storage from '../../utils/storage';
 
 const Penugasan = ({navigation}) => {
@@ -26,7 +28,7 @@ const Penugasan = ({navigation}) => {
         },
       })
       .then((res) => {
-        setPenugasan(res.nama);
+        setPenugasan(setPenugasanValue(res.nama));
         setWmp(res.wmp);
       })
       .catch((err) => {
@@ -74,9 +76,9 @@ const Penugasan = ({navigation}) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.menu}
-          onPress={() => navigation.navigate('History')}>
-          <IcHistory />
-          <Text style={styles.menuText}>History</Text>
+          onPress={() => navigation.navigate('SyncData')}>
+          <IcSinkron />
+          <Text style={styles.menuText}>Sinkron Data</Text>
         </TouchableOpacity>
       </View>
       {/* Maps */}
@@ -85,26 +87,26 @@ const Penugasan = ({navigation}) => {
           style={styles.map}
           showsUserLocation={true}
           initialRegion={{
-            latitude: -4.8021423,
-            longitude: 107.5284487,
-            latitudeDelta: 35,
-            longitudeDelta: 35,
+            latitude: 0.6148474716680845,
+            longitude: 116.15300640688237,
+            latitudeDelta: 5,
+            longitudeDelta: 5,
           }}
           followUserLocation={true}
           mapType="standard">
           {wmp.map((data, index) => {
-            return (
+            return data.lat !== '-' && data.long !== '-' ? (
               <Marker
                 key={index}
                 coordinate={{
-                  latitude: Number(data.lat),
-                  longitude: Number(data.long),
+                  latitude: Number(data.lat) || 0,
+                  longitude: Number(data.long) || 0,
                 }}>
                 <Callout>
                   <Text>{data.nama}</Text>
                 </Callout>
               </Marker>
-            );
+            ) : null;
           })}
         </MapView>
       </View>

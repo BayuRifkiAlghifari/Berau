@@ -4,7 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import normalize from 'react-native-normalize';
 import storage from '../../../utils/storage';
 
-const Select = ({value, onSelectChange, type, enabled}) => {
+const Select = ({value, onSelectChange, type, enabled, item}) => {
   const [wmp, setWmp] = useState([]);
 
   useEffect(() => {
@@ -35,6 +35,10 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             onValueChange={(itemValue) => onSelectChange(itemValue)}
             enabled={enabled}>
             <Picker.Item label="Area Tambang LMO" value="Area Tambang LMO" />
+            <Picker.Item
+              label="Area Tambang BMO"
+              value="Area Tambang BMO"
+            />
             <Picker.Item
               label="Area Tambang BMO I"
               value="Area Tambang BMO I"
@@ -87,11 +91,26 @@ const Select = ({value, onSelectChange, type, enabled}) => {
           </Picker>
         </View>
       )}
+      {type === 'Jenis Data Material' && (
+        <View style={styles.input}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            enabled={enabled}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item
+              label="Data Pemakaian Material"
+              value="Data Pemakaian Material"
+            />
+          </Picker>
+        </View>
+      )}
       {type === 'Jenis Data' && (
         <View style={styles.input}>
           <Picker
             selectedValue={value}
             style={styles.select}
+            enabled={enabled}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             <Picker.Item
               label="Data Pemakaian Kapur"
@@ -132,6 +151,7 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             <Picker.Item label="Pengerukan" value="Pengerukan" />
             <Picker.Item label="Alat Sparing" value="Alat Sparing" />
+            <Picker.Item label="Inspeksi" value="Inspeksi" />
           </Picker>
         </View>
       )}
@@ -154,8 +174,8 @@ const Select = ({value, onSelectChange, type, enabled}) => {
               value="Pintu Masuk Sedement Pond"
             />
             <Picker.Item
-              label="Titik Penataan (Pintu Effluent)"
-              value="Titik Penataan (Pintu Effluent)"
+              label="Titik Penaatan (Pintu Effluent)"
+              value="Titik Penaatan (Pintu Effluent)"
             />
             <Picker.Item
               label="Titik Lainnya (diSPORING)"
@@ -184,21 +204,11 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="Operator" value="Operator" />
-            <Picker.Item
-              label="Pengambil Contoh Uji (PPC)"
-              value="Pengambil Contoh Uji (PPC)"
-            />
-            <Picker.Item
-              label="Teknisi/Maintenance"
-              value="Teknisi/Maintenance"
-            />
-            <Picker.Item label="Pengawas Lapangan" value="Pengawas Lapangan" />
-            <Picker.Item label="QA/QC" value="QA/QC" />
-            <Picker.Item
-              label="Highest Administrator"
-              value="Highest Administrator"
-            />
+            {item.length > 1 && 
+              item?.map((item, index) => (
+                <Picker.Item key={index.toString()} label={item.nama} value={item.id} />
+              ))
+            }
           </Picker>
         </View>
       )}
@@ -208,8 +218,8 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="Shift-1" value="Shift-1" />
-            <Picker.Item label="Shift-2" value="Shift-2" />
+            <Picker.Item label="Shift-1 (06.00 - 18.00)" value="Shift-1" />
+            <Picker.Item label="Shift-2 (18.00 - 06.00)" value="Shift-2" />
           </Picker>
         </View>
       )}
@@ -232,8 +242,8 @@ const Select = ({value, onSelectChange, type, enabled}) => {
               value="Pintu Masuk Sedement Pond"
             />
             <Picker.Item
-              label="Titik Penataan (Pintu Effluent)"
-              value="Titik Penataan (Pintu Effluent)"
+              label="Titik Penaatan (Pintu Effluent)"
+              value="Titik Penaatan (Pintu Effluent)"
             />
             <Picker.Item
               label="Titik Lainnya (diSPORING)"
@@ -248,9 +258,17 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="Kapur" value="Kapur" />
-            <Picker.Item label="Tawas" value="Tawas" />
-            <Picker.Item label="Kapur & Tawas" value="Kapur & Tawas" />
+            {item ?
+              item.map((item, index) => (
+                <Picker.Item key={index.toString()} label={item.label} value={item.value} />
+              )) :
+              <>
+                <Picker.Item label="Kapur" value="Kapur" />
+                <Picker.Item label="Tawas" value="Tawas" />
+                <Picker.Item label="Kapur & Tawas" value="Kapur & Tawas" />
+                <Picker.Item label="Liquid" value="Liquid" />
+              </>
+            }
           </Picker>
         </View>
       )}
@@ -262,6 +280,8 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             <Picker.Item label="Pengerukan" value="Pengerukan" />
             <Picker.Item label="Alat Sparing" value="Alat Sparing" />
+            <Picker.Item label="Inspeksi" value="Inspeksi" />
+            <Picker.Item label="Tidak ada perbaikan" value="Tidak ada perbaikan" />
           </Picker>
         </View>
       )}
@@ -291,7 +311,7 @@ const Select = ({value, onSelectChange, type, enabled}) => {
         </View>
       )}
       {type === 'TSS' && (
-        <View style={styles.containerSelectSmall}>
+        <View style={[styles.containerSelectSmall, {width: normalize(110)}]}>
           <Picker
             selectedValue={value}
             style={styles.select}
@@ -301,7 +321,7 @@ const Select = ({value, onSelectChange, type, enabled}) => {
         </View>
       )}
       {type === 'Fe' && (
-        <View style={styles.containerSelectSmall}>
+        <View style={[styles.containerSelectSmall, {width: normalize(110)}]}>
           <Picker
             selectedValue={value}
             style={styles.select}
@@ -311,7 +331,7 @@ const Select = ({value, onSelectChange, type, enabled}) => {
         </View>
       )}
       {type === 'Mn' && (
-        <View style={styles.containerSelectSmall}>
+        <View style={[styles.containerSelectSmall, {width: normalize(110)}]}>
           <Picker
             selectedValue={value}
             style={styles.select}
@@ -321,12 +341,11 @@ const Select = ({value, onSelectChange, type, enabled}) => {
         </View>
       )}
       {type === 'Debit' && (
-        <View style={styles.containerSelectSmall}>
+        <View style={[styles.containerSelectSmall, {width: normalize(110)}]}>
           <Picker
             selectedValue={value}
             style={styles.select}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
-            <Picker.Item label="m3/detik" value="m3/detik" />
             <Picker.Item label="m3/hari" value="m3/hari" />
           </Picker>
         </View>
@@ -348,6 +367,7 @@ const Select = ({value, onSelectChange, type, enabled}) => {
           <Picker
             selectedValue={value}
             style={styles.select}
+            enabled={enabled}
             onValueChange={(itemValue) => onSelectChange(itemValue)}>
             <Picker.Item label="L" value="L" />
             <Picker.Item label="Kg" value="Kg" />
@@ -364,6 +384,38 @@ const Select = ({value, onSelectChange, type, enabled}) => {
             <Picker.Item label="L" value="L" />
             <Picker.Item label="Kg" value="Kg" />
             <Picker.Item label="Karung" value="Karung" />
+          </Picker>
+        </View>
+      )}
+      {type === 'Kg' && (
+        <View style={styles.containerSelectSmall}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="Kg" value="Kg" />
+          </Picker>
+        </View>
+      )}
+      {type === 'L' && (
+        <View style={styles.containerSelectSmall}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="L" value="L" />
+          </Picker>
+        </View>
+      )}
+      {type === 'Status Perbaikan' && (
+        <View style={styles.containerSelectMicro}>
+          <Picker
+            selectedValue={value}
+            style={styles.select}
+            enabled={enabled}
+            onValueChange={(itemValue) => onSelectChange(itemValue)}>
+            <Picker.Item label="Open" value="Open" />
+            <Picker.Item label="Close" value="Close" />
           </Picker>
         </View>
       )}
@@ -408,6 +460,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     marginTop: normalize(-8),
     marginLeft: normalize(-12),
+  },
+  containerSelectMicro: {
+    width: normalize(130),
+    borderWidth: 1,
+    borderColor: '#286090',
+    borderRadius: normalize(10),
+    paddingHorizontal: 2,
+    backgroundColor: '#FFFFFF',
   },
   select: {
     height: normalize(40),

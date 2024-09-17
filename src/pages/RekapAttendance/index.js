@@ -32,7 +32,7 @@ const RekapAttendance = ({navigation}) => {
   const date = Moment(form.date_input).format('YYYY-MM-DD');
 
   const API_HOST = {
-    url: 'https://berau.mogasacloth.com/api/v1',
+    url: 'https://berau.cbapps.co.id/api/v1',
   };
 
   useEffect(() => {
@@ -87,85 +87,106 @@ const RekapAttendance = ({navigation}) => {
     });
   };
 
+  const setBadgeColor = (kehadiran) => {
+    switch(kehadiran) {
+      case 'Hadir':
+        return '#286090';
+      case 'Tidak Hadir':
+        return '#A3A3A3';
+      case 'Izin':
+        return '#3BB54A';
+      case 'Sakit':
+        return '#FFC700';
+      default:
+        return '#A3A3A3';
+    }
+  }
+
   return (
     <View style={styles.page}>
       <HeaderDetail
         company="PT. Berau Coal"
         onPress={() => navigation.goBack()}
       />
-      <View style={styles.filterContainer}>
-        <View style={styles.date}>
-          <Text style={styles.label}>Tanggal Kehadiran</Text>
-          <Gap height={5} />
-          <TouchableOpacity
-            style={styles.calendar}
-            onPress={() => setShow(true)}>
-            <Text>{Moment(form.date_input).format('DD-MM-YYYY')}</Text>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={form.date_input}
-                mode="date"
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-        <Gap width={11} />
-        <View style={styles.attendance}>
-          <Text style={styles.label}>Kehadiran</Text>
-          <Gap height={5} />
-          <View style={styles.selectContainer}>
-            <Picker
-              selectedValue={form.kehadiran}
-              style={styles.select}
-              onValueChange={(value) => setForm('kehadiran', value)}>
-              <Picker.Item label="Semua" value="Semua" />
-              <Picker.Item label="Hadir" value="Hadir" />
-              <Picker.Item label="Tidak Hadir" value="Tidak Hadir" />
-            </Picker>
+      <ScrollView>
+        <View style={styles.filterContainer}>
+          <View style={styles.date}>
+            <Text style={styles.label}>Tanggal Kehadiran</Text>
+            <Gap height={5} />
+            <TouchableOpacity
+              style={styles.calendar}
+              onPress={() => setShow(true)}>
+              <Text>{Moment(form.date_input).format('DD-MM-YYYY')}</Text>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={form.date_input}
+                  mode="date"
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <Gap width={11} />
+          <View style={styles.attendance}>
+            <Text style={styles.label}>Kehadiran</Text>
+            <Gap height={5} />
+            <View style={styles.selectContainer}>
+              <Picker
+                selectedValue={form.kehadiran}
+                style={styles.select}
+                onValueChange={(value) => setForm('kehadiran', value)}>
+                <Picker.Item label="Semua" value="Semua" />
+                <Picker.Item label="Hadir" value="Hadir" />
+                <Picker.Item label="Izin" value="Izin" />
+                <Picker.Item label="Sakit" value="Sakit" />
+                <Picker.Item label="Tidak Hadir" value="Tidak Hadir" />
+              </Picker>
+            </View>
           </View>
         </View>
-      </View>
-      <Gap height={11} />
-      <View style={styles.positionButton}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.button}
-          onPress={onFilter}>
-          <Text style={styles.textButton}>Filter</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.list}>
-        <View style={styles.card}>
-          <ScrollView horizontal>
-            <View>
-              <View style={styles.header}>
-                <Text style={styles.labelName}>Nama</Text>
-                <Text style={styles.labelBadge}>Kehadiran</Text>
-                <Text style={styles.labelStatus}>Status</Text>
-                <Text style={styles.labelWmp}>WMP</Text>
-              </View>
-              {attendance.map((users) => {
-                return (
-                  <View style={styles.body} key={users.id}>
-                    <Text style={styles.valueName}>{users.nama}</Text>
-                    <View style={styles.containerBadge}>
-                      <View style={styles.badge(users.kehadiran)}>
-                        <Text style={styles.valueBadge}>{users.kehadiran}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.valueStatus}>{users.status}</Text>
-                    <Text style={styles.valueWmp}>{users.wmp}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          </ScrollView>
+        <Gap height={11} />
+        <View style={styles.positionButton}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.button}
+            onPress={onFilter}>
+            <Text style={styles.textButton}>Filter</Text>
+          </TouchableOpacity>
         </View>
-      </View>
+        <View style={styles.list}>
+          <View style={styles.card}>
+            <ScrollView horizontal>
+              <View>
+                <View style={styles.header}>
+                  <Text style={styles.labelName}>Nama</Text>
+                  <Text style={styles.labelBadge}>Kehadiran</Text>
+                  <Text style={styles.labelStatus}>Status</Text>
+                  <Text style={styles.labelWmp}>Jabatan</Text>
+                  <Text style={styles.labelWmp}>WMP</Text>
+                </View>
+                {attendance.map((users) => {
+                  return (
+                    <View style={styles.body} key={users.id}>
+                      <Text style={styles.valueName}>{users.nama}</Text>
+                      <View style={styles.containerBadge}>
+                        <View style={[styles.badge, {backgroundColor: setBadgeColor(users.kehadiran)}]}>
+                          <Text style={styles.valueBadge}>{users.kehadiran}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.valueStatus}>{users.status}</Text>
+                      <Text style={styles.valueWmp}>{users.jabatan}</Text>
+                      <Text style={styles.valueWmp}>{users.wmp}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -300,14 +321,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: normalize(-3),
   },
-  badge: (item) => ({
+  badge: {
     width: normalize(70),
-    backgroundColor: item === 'Tidak Hadir' ? '#A3A3A3' : '#286090',
+    backgroundColor: '#A3A3A3',
     borderRadius: normalize(5),
     paddingVertical: normalize(2),
     justifyContent: 'center',
     alignItems: 'center',
-  }),
+  },
   valueName: {
     fontFamily: 'Poppins-Regular',
     fontSize: normalize(12),

@@ -17,10 +17,12 @@ import {
   StepsKimia,
   StepsPerbaikan,
 } from '../../components';
+import { setPenugasanValue } from '../../utils';
 import storage from '../../utils/storage';
 
 const InputData = ({navigation}) => {
   const [penugasan, setPenugasan] = useState('Area Tambang LMO');
+  const [dataWmp, setDataWmp] = useState([]);
   const [wmp, setWmp] = useState('1');
   const [stepper, setStepper] = useState('AAT');
 
@@ -34,8 +36,10 @@ const InputData = ({navigation}) => {
           someFlag: true,
         },
       })
-      .then((ret) => {
-        setPenugasan(ret.nama);
+      .then((res) => {
+        setPenugasan(setPenugasanValue(res.nama));
+        setWmp(res.wmp[0].id);
+        setDataWmp(res.wmp);
       })
       .catch((err) => {
         console.error(err.response);
@@ -112,9 +116,9 @@ const InputData = ({navigation}) => {
           )}
         </View>
         <View style={styles.containerSteps}>
-          {stepper === 'AAT' && <Steps />}
-          {stepper === 'Bahan Kimia' && <StepsKimia />}
-          {stepper === 'Perbaikan' && <StepsPerbaikan />}
+          {stepper === 'AAT' && <Steps wmp={wmp} dataWmp={dataWmp} />}
+          {stepper === 'Bahan Kimia' && <StepsKimia wmp={wmp} dataWmp={dataWmp} />}
+          {stepper === 'Perbaikan' && <StepsPerbaikan wmp={wmp} dataWmp={dataWmp} />}
         </View>
       </ScrollView>
     </View>

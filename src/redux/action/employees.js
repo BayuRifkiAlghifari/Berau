@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 const API_HOST = {
-  url: 'https://berau.mogasacloth.com/api/v1',
+  url: 'https://berau.cbapps.co.id/api/v1',
 };
 
 export const getEmployees = (token) => (dispatch) => {
